@@ -23,8 +23,9 @@ module.exports = function (argv) {
 
         process.chdir(npm.config.get('prefix'));
 
-        service.register(targetName).then(function (r) {
+        return service.register(targetName).then(function (r) {
           console.log('registered global', r.name + '@' + r.version, ' with ', r.server.host + ':' + r.server.host);
+          resolve();
         }, reject);
       });
     });
