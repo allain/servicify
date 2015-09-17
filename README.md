@@ -19,7 +19,7 @@ npm install -g servicify
 servicify listen [--port 2020] [--host 127.0.0.1]
 ```
 
-### Register the package with the server
+### Register a package with the server
 
 ```bash
 servicify register PACKAGE-NAME [--port 2020] [--host 127.0.0.1]
