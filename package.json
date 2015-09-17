@@ -1,0 +1,41 @@
+{
+  "name": "servicify",
+  "version": "0.1.0",
+  "description": "A service registry tool that allows you to trivially turn a node package into a consumable web service.",
+  "main": "index.js",
+  "bin": {
+    "servicify": "./bin/cmd.js"
+  },
+  "scripts": {
+    "test": "blue-tape test/*.js",
+    "lint": "jshint --config .jshintrc index.js test/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://git@github.com/allain/servicify.git"
+  },
+  "keywords": [
+    "semver",
+    "registry"
+  ],
+  "author": "Allain Lalonde <allain.lalonde@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/allain/servicify/issues"
+  },
+  "homepage": "https://github.com/allain/servificy#readme",
+  "dependencies": {
+    "get-parameter-names": "^0.2.0",
+    "minimist": "^1.2.0",
+    "servicify-client": "^0.1.0",
+    "servicify-server": "^0.1.0",
+    "servicify-service": "^0.1.0"
+  },
+  "devDependencies": {
+    "async-identity": "^1.0.0",
+    "blue-tape": "^0.1.10",
+    "bluebird": "^2.10.0",
+    "jshint": "^2.8.0",
+    "uniqid": "^1.0.0"
+  }
+}
