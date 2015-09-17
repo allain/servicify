@@ -7,7 +7,7 @@ test('supports simple require replacement', function (t) {
   return withServer().then(function (server) {
     var identity = require('async-identity');
 
-    return new ServicifyService().register(identity, {name: 'async-identity', version: '1.2.3'}).then(function (service) {
+    return new ServicifyService().offer(identity, {name: 'async-identity', version: '1.2.3'}).then(function (service) {
       var servicify = require('..')();
 
       var fn = servicify.require('async-identity');

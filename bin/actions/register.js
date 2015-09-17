@@ -1,6 +1,5 @@
 var ServicifyService = require('servicify-service');
 var npm = require('npm');
-var temp = require('temp');
 
 module.exports = function (argv) {
   var serverHost = argv.host || '127.0.0.1';
@@ -12,8 +11,8 @@ module.exports = function (argv) {
 
   var targetName = argv._[1];
 
-  service.register(targetName).then(function (r) {
-    console.log('registered local', r.name + '@' + r.version, ' with ', r.server.host + ':' + r.server.host);
+  service.offer(targetName).then(function (r) {
+    console.log('offering local', r.name + '@' + r.version, ' with ', r.server.host + ':' + r.server.host);
   }, function (err) {
     if (err.code !== 'MODULE_NOT_FOUND') throw err;
 
@@ -23,8 +22,8 @@ module.exports = function (argv) {
 
         process.chdir(npm.config.get('prefix'));
 
-        return service.register(targetName).then(function (r) {
-          console.log('registered global', r.name + '@' + r.version, ' with ', r.server.host + ':' + r.server.host);
+        return service.offer(targetName).then(function (r) {
+          console.log('offering global', r.name + '@' + r.version, ' with ', r.server.host + ':' + r.server.host);
           resolve();
         }, reject);
       });
