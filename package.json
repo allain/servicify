@@ -29,7 +29,7 @@
     "minimist": "^1.2.0",
     "npm": "^2.14.3",
     "servicify-client": "^0.2.0",
-    "servicify-server": "^0.2.0",
+    "servicify-server": "^0.2.1",
     "servicify-service": "^0.4.0"
   },
   "devDependencies": {
