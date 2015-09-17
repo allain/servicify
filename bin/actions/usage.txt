@@ -1,0 +1,10 @@
+servicify command [options]
+
+Start Server
+  servicify listen [--host 127.0.0.1] [--port 2020]
+
+Register Package
+  servicify register PKGNAME [--host 127.0.0.1] [--port 2020] [--local]
+
+  --local Uses require.resolve to find version of the package to use.
+          If left out, servicify will install the latest package from npm in the tmp directory and server it.
