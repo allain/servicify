@@ -48,6 +48,7 @@
     "blue-tape": "^0.1.10",
     "faucet": "0.0.1",
     "jshint": "^2.8.0",
+    "promise-event-before": "^1.0.0",
     "promise-identity": "^1.0.0"
   }
 }

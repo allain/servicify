@@ -3,7 +3,7 @@ var test = require('blue-tape');
 var Promise = require('bluebird');
 var rpc = require('node-json-rpc');
 var uniqid = require('uniqid');
-var poll = require('promise-poll');
+var eventBefore = require('promise-event-before');
 var ServicifyServer = require('../lib/server');
 var ServicifyService = require('../lib/service');
 
@@ -164,17 +164,6 @@ test('service - invocations affects load between heartbeats', function (t) {
     });
   });
 });
-
-function eventBefore(obj, eventName, timeout) {
-  var emitted;
-  obj.once(eventName, function (result) {
-    emitted = result;
-  });
-
-  return poll(function () {
-    return emitted;
-  }, timeout);
-}
 
 function callRpc(client, method, params) {
   return Promise.fromNode(function (cb) {
