@@ -19,7 +19,9 @@ test('supports requiring packages that export an async callback function', funct
         t.equal(result, 100);
         return service.stop();
       });
-    }).then(server.stop);
+    }).then(function() {
+      return server.stop();
+    });
   });
 });
 
