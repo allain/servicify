@@ -33,10 +33,11 @@
     "servicify-service": "^0.4.0"
   },
   "devDependencies": {
-    "async-identity": "^1.0.0",
+    "async-identity": "^1.0.1",
     "blue-tape": "^0.1.10",
     "bluebird": "^2.10.0",
     "jshint": "^2.8.0",
+    "promise-identity": "^1.0.0",
     "uniqid": "^1.0.0"
   }
 }

@@ -3,7 +3,7 @@ var Promise = require('bluebird');
 var ServicifyService = require('servicify-service');
 var ServicifyServer = require('servicify-server');
 
-test('supports simple require replacement', function (t) {
+test('supports requiring packages that export an async callback function', function (t) {
   return withServer().then(function (server) {
     var identity = require('async-identity');
 
@@ -17,12 +17,28 @@ test('supports simple require replacement', function (t) {
         fn(100, cb);
       }).then(function (result) {
         t.equal(result, 100);
-
         return service.stop();
       });
-    }).then(function () {
-      return server.stop();
-    });
+    }).then(server.stop);
+  });
+});
+
+test('supports requiring packages that export an promise returning function', function (t) {
+  return withServer().then(function (server) {
+    var identity = require('promise-identity');
+
+    return new ServicifyService().offer(identity, {name: 'promise-identity', version: '1.2.3'}).then(function (service) {
+      var servicify = require('..')();
+
+      var fn = servicify.require('promise-identity');
+
+      t.equal(typeof fn, 'function');
+
+      return fn(100).then(function (result) {
+        t.equal(result, 100);
+        return service.stop();
+      });
+    }).then(server.stop);
   });
 });
 
