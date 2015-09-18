@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/allain/servificy#readme",
   "dependencies": {
+    "bluebird": "^2.10.0",
     "get-parameter-names": "^0.2.0",
     "minimist": "^1.2.0",
     "node-json-rpc": "0.0.1",
@@ -37,9 +38,7 @@
   "devDependencies": {
     "async-identity": "^1.0.1",
     "blue-tape": "^0.1.10",
-    "bluebird": "^2.10.0",
     "jshint": "^2.8.0",
-    "promise-identity": "^1.0.0",
-    "uniqid": "^1.0.0"
+    "promise-identity": "^1.0.0"
   }
 }
