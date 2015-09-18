@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-var ServicifyService = require('../../lib/service');
+var ServicifyService = require('../lib/service');
 
 var fs = require('fs');
 
