@@ -12,7 +12,8 @@ if (argv.version) {
 
 var actions = {
   listen: require('./actions/listen'),
-  register: require('./actions/register'),
+  offer: require('./actions/offer'),
+  resolve: require('./actions/resolve'),
   usage: require('./actions/usage')
 };
 

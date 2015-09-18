@@ -12,7 +12,9 @@ module.exports = function (argv) {
   var targetName = argv._[1];
 
   service.offer(targetName).then(function (r) {
-    console.log('offering local', r.name + '@' + r.version, ' with ', r.server.host + ':' + r.server.host);
+    console.log('offering local', r.name + '@' + r.version, 'through', r.server.host + ':' + r.server.port);
+
+    registerForCleanup(r);
   }, function (err) {
     if (err.code !== 'MODULE_NOT_FOUND') throw err;
 
@@ -23,7 +25,8 @@ module.exports = function (argv) {
         process.chdir(npm.config.get('prefix'));
 
         return service.offer(targetName).then(function (r) {
-          console.log('offering global', r.name + '@' + r.version, ' with ', r.server.host + ':' + r.server.host);
+          console.log('offering global', r.name + '@' + r.version, 'through', r.server.host + ':' + r.server.port);
+          registerForCleanup(r);
           resolve();
         }, reject);
       });
@@ -40,4 +43,31 @@ module.exports = function (argv) {
 
     process.exit(1);
   });
+
+  function registerForCleanup(registration) {
+    process.stdin.resume();//so the program will not close instantly
+
+    function exitHandler(options, err) {
+      if (registration) {
+        registration.stop().then(function () {
+          registration = null;
+          console.log('rescinded offer');
+          process.exit();
+        });
+
+        if (err) {
+          console.log(err.stack);
+        }
+      }
+    }
+
+    //do something when app is closing
+    process.on('exit', exitHandler.bind(null, {cleanup: true}));
+
+    //catches ctrl+c event
+    process.on('SIGINT', exitHandler.bind(null, {exit: true}));
+
+    //catches uncaught exceptions
+    process.on('uncaughtException', exitHandler.bind(null, {exit: true}));
+  }
 };

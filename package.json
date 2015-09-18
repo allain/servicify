@@ -27,10 +27,12 @@
   "dependencies": {
     "get-parameter-names": "^0.2.0",
     "minimist": "^1.2.0",
+    "node-json-rpc": "0.0.1",
     "npm": "^2.14.3",
     "servicify-client": "^0.2.0",
     "servicify-server": "^0.2.1",
-    "servicify-service": "^0.4.0"
+    "servicify-service": "^0.4.0",
+    "uniqid": "^1.0.0"
   },
   "devDependencies": {
     "async-identity": "^1.0.1",
