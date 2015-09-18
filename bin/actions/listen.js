@@ -1,4 +1,4 @@
-var ServicifyServer = require('servicify-server');
+var ServicifyServer = require('../../lib/server');
 
 module.exports = function(argv) {
   new ServicifyServer().listen({

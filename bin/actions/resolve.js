@@ -1,4 +1,4 @@
-var ServicifyService = require('servicify-service');
+var ServicifyService = require('../../lib/service');
 var npm = require('npm');
 var uniqid = require('uniqid');
 var rpc = require('node-json-rpc');
