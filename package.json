@@ -7,7 +7,7 @@
     "servicify": "./bin/cmd.js"
   },
   "scripts": {
-    "test": "blue-tape test/*.js",
+    "test": "faucet test/*.js",
     "lint": "jshint --config .jshintrc index.js test/*.js"
   },
   "repository": {
@@ -26,18 +26,23 @@
   "homepage": "https://github.com/allain/servificy#readme",
   "dependencies": {
     "bluebird": "^2.10.0",
+    "debug": "^2.2.0",
+    "defaults": "^1.0.2",
+    "defined": "^1.0.0",
+    "ducktype": "^1.1.0",
     "get-parameter-names": "^0.2.0",
+    "get-port": "^1.0.0",
     "minimist": "^1.2.0",
     "node-json-rpc": "0.0.1",
     "npm": "^2.14.5",
-    "servicify-client": "^0.2.2",
-    "servicify-server": "^0.2.3",
-    "servicify-service": "^0.4.2",
+    "package-path": "0.0.1",
+    "semver": "^5.0.3",
     "uniqid": "^1.0.0"
   },
   "devDependencies": {
     "async-identity": "^1.0.1",
     "blue-tape": "^0.1.10",
+    "faucet": "0.0.1",
     "jshint": "^2.8.0",
     "promise-identity": "^1.0.0"
   }

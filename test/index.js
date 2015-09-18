@@ -1,9 +1,9 @@
 var test = require('blue-tape');
 var Promise = require('bluebird');
-var ServicifyService = require('servicify-service');
-var ServicifyServer = require('servicify-server');
+var ServicifyService = require('../lib/service');
+var ServicifyServer = require('../lib/server');
 
-test('supports requiring packages that export an async callback function', function (t) {
+test('cli - supports requiring packages that export an async callback function', function (t) {
   return withServer().then(function (server) {
     var identity = require('async-identity');
 
@@ -25,7 +25,7 @@ test('supports requiring packages that export an async callback function', funct
   });
 });
 
-test('supports requiring packages that export an promise returning function', function (t) {
+test('cli - supports requiring packages that export an promise returning function', function (t) {
   return withServer().then(function (server) {
     var identity = require('promise-identity');
 
@@ -40,7 +40,9 @@ test('supports requiring packages that export an promise returning function', fu
         t.equal(result, 100);
         return service.stop();
       });
-    }).then(server.stop);
+    }).then(function() {
+      return server.stop();
+    });
   });
 });
 

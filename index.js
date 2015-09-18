@@ -1,4 +1,4 @@
-var ServicifyClient = require('servicify-client');
+var ServicifyClient = require('./lib/client');
 var getParamNames = require('get-parameter-names');
 
 function Servicify(opts) {
