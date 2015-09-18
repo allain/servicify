@@ -13,8 +13,8 @@ test('client - can be created without a server to connect to yet', function (t) 
 });
 
 test('client - returned service has expected API', function (t) {
-  return withServer().then(function (server) {
-    var ps = new ServicifyService();
+  return new ServicifyServer().listen().then(function (server) {
+    var ps = new ServicifyService({host: server.host});
     var identity = require('async-identity');
 
     return ps.offer(identity, {name: 'async-identity', version: '1.0.0'}).then(function (service) {
@@ -22,7 +22,7 @@ test('client - returned service has expected API', function (t) {
       t.ok(service.port, 'has port');
       t.equal(service.load, 0, '0 load');
       t.equal(typeof service.invoke, 'function', 'has invoke function');
-      t.deepEqual(service.server, {host: '127.0.0.1', port: 2020}, 'has server location');
+      t.deepEqual(service.server, {host: server.host, port: server.port}, 'has server location');
       return service.stop();
     }).then(function () {
       return server.stop();
@@ -31,8 +31,8 @@ test('client - returned service has expected API', function (t) {
 });
 
 test('client - supports registering a function that returns promises', function(t) {
-  return withServer().then(function(server) {
-    var ps = new ServicifyService();
+  return new ServicifyServer().listen().then(function(server) {
+    var ps = new ServicifyService({host: server.host});
     var identity = function(x) { return Promise.resolve(x); }
 
     return ps.offer(identity, {name: 'identity', version: '1.0.0'}).then(function (service) {
@@ -48,8 +48,8 @@ test('client - supports registering a function that returns promises', function(
 });
 
 test('client - supports registering a package by name', function (t) {
-  return withServer().then(function (server) {
-    var ps = new ServicifyService();
+  return new ServicifyServer().listen().then(function (server) {
+    var ps = new ServicifyService({host: server.host});
 
     return ps.offer('async-identity').then(function (service) {
       t.ok(service.host, 'has host');
@@ -62,8 +62,8 @@ test('client - supports registering a package by name', function (t) {
 });
 
 test('client - supports registering a package by its absolute directory', function (t) {
-  return withServer().then(function (server) {
-    var ps = new ServicifyService();
+  return new ServicifyServer().listen().then(function (server) {
+    var ps = new ServicifyService({host: server.host});
 
     return ps.offer(__dirname + '/../node_modules/async-identity').then(function (service) {
       t.ok(service.host);
@@ -76,8 +76,8 @@ test('client - supports registering a package by its absolute directory', functi
 });
 
 test('client - rejects registering a package by its relative directory', function (t) {
-  return withServer().then(function (server) {
-    var ps = new ServicifyService();
+  return new ServicifyServer().listen().then(function (server) {
+    var ps = new ServicifyService({host: server.host});
 
     return ps.offer('../node_modules/async-identity').catch(function (err) {
       t.ok(err);
@@ -87,8 +87,8 @@ test('client - rejects registering a package by its relative directory', functio
 });
 
 test('client - exposes async-callback function through rpc', function (t) {
-  return withServer().then(function (server) {
-    var ps = new ServicifyService();
+  return new ServicifyServer().listen().then(function (server) {
+    var ps = new ServicifyService({host: server.host});
     var identity = require('async-identity');
 
     return ps.offer(identity, {name: 'async-identity', version: '1.0.0'}).then(function (service) {
@@ -110,8 +110,8 @@ test('client - exposes async-callback function through rpc', function (t) {
 });
 
 test('client - exposes async-promise function through rpc', function (t) {
-  return withServer().then(function (server) {
-    var ps = new ServicifyService();
+  return new ServicifyServer().listen().then(function (server) {
+    var ps = new ServicifyService({host: server.host});
     var identity = function(x) { return Promise.resolve(x); }
 
     return ps.offer(identity, {name: 'identity', version: '1.0.0'}).then(function (service) {
@@ -133,8 +133,8 @@ test('client - exposes async-promise function through rpc', function (t) {
 });
 
 test('client - invocations affects load between heartbeats', function (t) {
-  return withServer().then(function (server) {
-    var ps = new ServicifyService({heartbeat: 10});
+  return new ServicifyServer().listen().then(function (server) {
+    var ps = new ServicifyService({host: server.host, heartbeat: 10});
     var identity = require('async-identity');
 
     return ps.offer(identity, {name: 'async-identity', version: '1.0.0'}).then(function (service) {
@@ -151,7 +151,7 @@ test('client - invocations affects load between heartbeats', function (t) {
         callRpc(client, 'invoke', [2]),
         callRpc(client, 'invoke', [3])
       ]).then(function () {
-        return Promise.delay(5);
+        return Promise.delay(10);
       }).then(function () {
         t.ok(startLoad < service.load, startLoad + ' load < ' + service.load + ' load');
         return Promise.delay(10);
@@ -164,11 +164,6 @@ test('client - invocations affects load between heartbeats', function (t) {
     });
   });
 });
-
-function withServer() {
-  var server = new ServicifyServer();
-  return server.listen();
-}
 
 function callRpc(client, method, params) {
   return Promise.fromNode(function (cb) {

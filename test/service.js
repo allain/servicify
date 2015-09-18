@@ -3,7 +3,7 @@ var test = require('blue-tape');
 var Promise = require('bluebird');
 var rpc = require('node-json-rpc');
 var uniqid = require('uniqid');
-
+var poll = require('promise-poll');
 var ServicifyServer = require('../lib/server');
 var ServicifyService = require('../lib/service');
 
@@ -14,7 +14,7 @@ test('service - can be created without a server to connect to yet', function (t)
 });
 
 test('service - returned service has expected API', function (t) {
-  return withServer().then(function (server) {
+  return new ServicifyServer().listen().then(function (server) {
     var ps = new ServicifyService();
     var identity = require('async-identity');
 
@@ -23,7 +23,7 @@ test('service - returned service has expected API', function (t) {
       t.ok(service.port, 'has port');
       t.equal(service.load, 0, '0 load');
       t.equal(typeof service.invoke, 'function', 'has invoke function');
-      t.deepEqual(service.server, {host: '127.0.0.1', port: 2020}, 'has server location');
+      t.deepEqual(service.server, {host: server.host, port: server.port}, 'has server location');
       return service.stop();
     }).then(function () {
       return server.stop();
@@ -32,7 +32,7 @@ test('service - returned service has expected API', function (t) {
 });
 
 test('service - supports registering a function that returns promises', function(t) {
-  return withServer().then(function(server) {
+  return new ServicifyServer().listen().then(function(server) {
     var ps = new ServicifyService();
     var identity = function(x) { return Promise.resolve(x); }
 
@@ -49,7 +49,7 @@ test('service - supports registering a function that returns promises', function
 });
 
 test('service - supports registering a package by name', function (t) {
-  return withServer().then(function (server) {
+  return new ServicifyServer().listen().then(function (server) {
     var ps = new ServicifyService();
 
     return ps.offer('async-identity').then(function (service) {
@@ -63,7 +63,7 @@ test('service - supports registering a package by name', function (t) {
 });
 
 test('service - supports registering a package by its absolute directory', function (t) {
-  return withServer().then(function (server) {
+  return new ServicifyServer().listen().then(function (server) {
     var ps = new ServicifyService();
 
     return ps.offer(__dirname + '/../node_modules/async-identity').then(function (service) {
@@ -77,7 +77,7 @@ test('service - supports registering a package by its absolute directory', funct
 });
 
 test('service - rejects registering a package by its relative directory', function (t) {
-  return withServer().then(function (server) {
+  return new ServicifyServer().listen().then(function (server) {
     var ps = new ServicifyService();
 
     return ps.offer('../node_modules/async-identity').catch(function (err) {
@@ -88,7 +88,7 @@ test('service - rejects registering a package by its relative directory', functi
 });
 
 test('service - exposes async-callback function through rpc', function (t) {
-  return withServer().then(function (server) {
+  return new ServicifyServer().listen().then(function (server) {
     var ps = new ServicifyService();
     var identity = require('async-identity');
 
@@ -111,7 +111,7 @@ test('service - exposes async-callback function through rpc', function (t) {
 });
 
 test('service - exposes async-promise function through rpc', function (t) {
-  return withServer().then(function (server) {
+  return new ServicifyServer().listen().then(function (server) {
     var ps = new ServicifyService();
     var identity = function(x) { return Promise.resolve(x); }
 
@@ -134,7 +134,7 @@ test('service - exposes async-promise function through rpc', function (t) {
 });
 
 test('service - invocations affects load between heartbeats', function (t) {
-  return withServer().then(function (server) {
+  return new ServicifyServer().listen().then(function (server) {
     var ps = new ServicifyService({heartbeat: 10});
     var identity = require('async-identity');
 
@@ -145,19 +145,18 @@ test('service - invocations affects load between heartbeats', function (t) {
         path: '/porty',
         strict: true
       });
-      var startLoad = service.load;
 
       return Promise.all([
         callRpc(client, 'invoke', [1]),
         callRpc(client, 'invoke', [2]),
         callRpc(client, 'invoke', [3])
       ]).then(function () {
-        return Promise.delay(5);
-      }).then(function () {
-        t.ok(startLoad < service.load, startLoad + ' load < ' + service.load + ' load');
-        return Promise.delay(10);
-      }).then(function () {
-        t.equal(service.load, 0);
+        return eventBefore(ps, 'heartbeat', 100);
+      }).then(function (heartbeat) {
+        t.ok(heartbeat.load > 0);
+        return eventBefore(ps, 'heartbeat', 100);
+      }).then(function (heartbeat) {
+        t.equal(heartbeat.load, 0);
         return service.stop();
       }).then(function () {
         return server.stop();
@@ -166,9 +165,15 @@ test('service - invocations affects load between heartbeats', function (t) {
   });
 });
 
-function withServer() {
-  var server = new ServicifyServer();
-  return server.listen();
+function eventBefore(obj, eventName, timeout) {
+  var emitted;
+  obj.once(eventName, function (result) {
+    emitted = result;
+  });
+
+  return poll(function () {
+    return emitted;
+  }, timeout);
 }
 
 function callRpc(client, method, params) {

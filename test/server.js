@@ -14,15 +14,15 @@ test('server - can be created without options', function (t) {
 test('server - supports lifecycle without arguments', function (t) {
   return new ServicifyServer().listen().then(function (srv) {
     t.ok(srv);
+    t.ok(srv.host);
     t.equal(srv.port, 2020);
-    t.equal(srv.host, '127.0.0.1');
     return srv.stop();
   });
 });
 
 test('server - server has expected api', function(t) {
   return new ServicifyServer().listen().then(function (srv) {
-    t.equal(srv.host, '127.0.0.1');
+    t.ok(srv.host);
     t.equal(srv.port, 2020);
     t.equal(typeof srv.resolve, 'function');
     t.equal(typeof srv.rescind, 'function');
@@ -35,7 +35,7 @@ test('server - is exposed as an rpc endpoints', function (t) {
   return new ServicifyServer().listen().then(function (srv) {
     var client = new rpc.Client({
       port: 2020,
-      host: '127.0.0.1',
+      host: srv.host,
       path: '/',
       strict: true
     });

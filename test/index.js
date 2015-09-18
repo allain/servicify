@@ -4,10 +4,10 @@ var ServicifyService = require('../lib/service');
 var ServicifyServer = require('../lib/server');
 
 test('cli - supports requiring packages that export an async callback function', function (t) {
-  return withServer().then(function (server) {
+  return new ServicifyServer().listen({host: '127.0.0.1'}).then(function (server) {
     var identity = require('async-identity');
 
-    return new ServicifyService().offer(identity, {name: 'async-identity', version: '1.2.3'}).then(function (service) {
+    return new ServicifyService({host: server.host}).offer(identity, {name: 'async-identity', version: '1.2.3'}).then(function (service) {
       var servicify = require('..')();
 
       var fn = servicify.require('async-identity');
@@ -26,10 +26,10 @@ test('cli - supports requiring packages that export an async callback function',
 });
 
 test('cli - supports requiring packages that export an promise returning function', function (t) {
-  return withServer().then(function (server) {
+  return new ServicifyServer().listen({host: '127.0.0.1'}).then(function (server) {
     var identity = require('promise-identity');
 
-    return new ServicifyService().offer(identity, {name: 'promise-identity', version: '1.2.3'}).then(function (service) {
+    return new ServicifyService({host: server.host}).offer(identity, {name: 'promise-identity', version: '1.2.3'}).then(function (service) {
       var servicify = require('..')();
 
       var fn = servicify.require('promise-identity');
@@ -45,8 +45,3 @@ test('cli - supports requiring packages that export an promise returning functio
     });
   });
 });
-
-function withServer() {
-  var server = new ServicifyServer();
-  return server.listen();
-}
