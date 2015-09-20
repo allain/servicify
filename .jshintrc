@@ -14,7 +14,7 @@
   //"maxlen": 100,
   "node": true,
   "globals": {
-    "request": false,
+    "require": false,
     "process": false,
     "Buffer": false,
     "window": false,

@@ -1,8 +1,9 @@
-var ServicifyService = require('../../lib/service');
 var npm = require('npm');
 var uniqid = require('uniqid');
 var rpc = require('node-json-rpc');
 var Promise = require('bluebird');
+
+var ServicifyServicer = require('../../lib/servicer');
 
 module.exports = function (argv) {
   var serverHost = argv.host || '127.0.0.1';

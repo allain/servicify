@@ -1,13 +1,17 @@
 var test = require('blue-tape');
 var Promise = require('bluebird');
-var ServicifyService = require('../lib/service');
-var ServicifyServer = require('../lib/server');
+var ServicifyServicer = require('../lib/servicer');
 
-test('cli - supports requiring packages that export an async callback function', function (t) {
-  return new ServicifyServer().listen({host: '127.0.0.1'}).then(function (server) {
+var useServer = require('./fixtures/use-server');
+
+test('index - supports requiring packages that export an async callback function', function (t) {
+  return useServer(function (server) {
     var identity = require('async-identity');
 
-    return new ServicifyService({host: server.host}).offer(identity, {name: 'async-identity', version: '1.2.3'}).then(function (service) {
+    return new ServicifyServicer({host: server.host}).offer(identity, {
+      name: 'async-identity',
+      version: '1.2.3'
+    }).then(function (service) {
       var servicify = require('..')();
 
       var fn = servicify.require('async-identity');
@@ -19,17 +23,18 @@ test('cli - supports requiring packages that export an async callback function',
         t.equal(result, 100);
         return service.stop();
       });
-    }).then(function() {
-      return server.stop();
     });
   });
 });
 
-test('cli - supports requiring packages that export an promise returning function', function (t) {
-  return new ServicifyServer().listen({host: '127.0.0.1'}).then(function (server) {
+test('index - supports requiring packages that export an promise returning function', function (t) {
+  return useServer(function(server) {
     var identity = require('promise-identity');
 
-    return new ServicifyService({host: server.host}).offer(identity, {name: 'promise-identity', version: '1.2.3'}).then(function (service) {
+    return new ServicifyServicer({host: server.host}).offer(identity, {
+      name: 'promise-identity',
+      version: '1.2.3'
+    }).then(function (service) {
       var servicify = require('..')();
 
       var fn = servicify.require('promise-identity');
@@ -40,8 +45,39 @@ test('cli - supports requiring packages that export an promise returning functio
         t.equal(result, 100);
         return service.stop();
       });
-    }).then(function() {
-      return server.stop();
     });
   });
 });
+
+test('index - supports offering endpoints that are not actual packages', function (t) {
+  return useServer(function (server) {
+    var dbl = function (x) {
+      return x * 2;
+    };
+
+    // random package name
+    var name = 'dbl' + Math.round(Math.random() * 10000);
+    var dblSpec = {name: name, version: '1.3.5'};
+
+    return new ServicifyServicer({host: server.host}).offer(dbl, dblSpec).then(function (service) {
+      return service.stop();
+    });
+  });
+});
+
+test('index - supports requiring endpoints that are not actual packages', function (t) {
+  return useServer(function (server) {
+    var dbl = function (x) {
+      return x * 2;
+    };
+
+    // random package name
+    var name = 'dbl' + Math.round(Math.random() * 10000);
+    var dblSpec = {name: name, version: '1.3.5'};
+
+    return new ServicifyServicer({host: server.host}).offer(dbl, dblSpec).then(function (service) {
+      return service.stop();
+    });
+  });
+});
+

@@ -1,10 +1,10 @@
-var ServicifyService = require('../../lib/service');
+var ServicifyServicer = require('../../lib/servicer');
 var npm = require('npm');
 
 module.exports = function (argv) {
   var serverHost = argv.host || '127.0.0.1';
   var serverPort = argv.port || 2020;
-  var service = new ServicifyService({
+  var service = new ServicifyServicer({
     host: serverHost,
     port: serverPort
   });

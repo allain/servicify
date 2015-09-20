@@ -4,18 +4,20 @@ var Promise = require('bluebird');
 var rpc = require('node-json-rpc');
 var uniqid = require('uniqid');
 var eventBefore = require('promise-event-before');
-var ServicifyServer = require('../lib/server');
-var ServicifyService = require('../lib/service');
 
-test('service - can be created without a server to connect to yet', function (t) {
-  var ps = new ServicifyService();
-  t.ok(ps instanceof ServicifyService);
+var useServer = require('./fixtures/use-server');
+
+var ServicifyServicer = require('../lib/servicer');
+
+test('servicer - can be created without a server to connect to yet', function (t) {
+  var ps = new ServicifyServicer();
+  t.ok(ps instanceof ServicifyServicer);
   t.end();
 });
 
-test('service - returned service has expected API', function (t) {
-  return new ServicifyServer().listen().then(function (server) {
-    var ps = new ServicifyService();
+test('servicer - returned service has expected API', function (t) {
+  return useServer(function (server) {
+    var ps = new ServicifyServicer(server);
     var identity = require('async-identity');
 
     return ps.offer(identity, {name: 'async-identity', version: '1.0.0'}).then(function (service) {
@@ -25,71 +27,64 @@ test('service - returned service has expected API', function (t) {
       t.equal(typeof service.invoke, 'function', 'has invoke function');
       t.deepEqual(service.server, {host: server.host, port: server.port}, 'has server location');
       return service.stop();
-    }).then(function () {
-      return server.stop();
     });
   });
 });
 
-test('service - supports registering a function that returns promises', function(t) {
-  return new ServicifyServer().listen().then(function(server) {
-    var ps = new ServicifyService();
-    var identity = function(x) { return Promise.resolve(x); }
+test('servicer - supports registering a function that returns promises', function (t) {
+  return useServer(function (server) {
+    var ps = new ServicifyServicer(server);
+    var identity = function (x) {
+      return Promise.resolve(x);
+    }
 
     return ps.offer(identity, {name: 'identity', version: '1.0.0'}).then(function (service) {
       t.equal(typeof service.invoke, 'function', 'has invoke function');
-      return service.invoke([10]).then(function(result) {
+      return service.invoke([10]).then(function (result) {
         t.equal(result, 10);
         return service.stop();
-      }).then(function () {
-        return server.stop();
       });
     });
   })
 });
 
-test('service - supports registering a package by name', function (t) {
-  return new ServicifyServer().listen().then(function (server) {
-    var ps = new ServicifyService();
+test('servicer - supports registering a package by name', function (t) {
+  return useServer(function (server) {
+    var ps = new ServicifyServicer(server);
 
     return ps.offer('async-identity').then(function (service) {
       t.ok(service.host, 'has host');
       t.ok(service.port, 'has port');
       return service.stop();
-    }).then(function () {
-      return server.stop();
     });
   });
 });
 
-test('service - supports registering a package by its absolute directory', function (t) {
-  return new ServicifyServer().listen().then(function (server) {
-    var ps = new ServicifyService();
+test('servicer - supports registering a package by its absolute directory', function (t) {
+  return useServer(function (server) {
+    var ps = new ServicifyServicer(server);
 
     return ps.offer(__dirname + '/../node_modules/async-identity').then(function (service) {
       t.ok(service.host);
       t.ok(service.port);
       return service.stop();
-    }).then(function () {
-      return server.stop();
     });
   });
 });
 
-test('service - rejects registering a package by its relative directory', function (t) {
-  return new ServicifyServer().listen().then(function (server) {
-    var ps = new ServicifyService();
+test('servicer - rejects registering a package by its relative directory', function (t) {
+  return useServer(function (server) {
+    var ps = new ServicifyServicer();
 
     return ps.offer('../node_modules/async-identity').catch(function (err) {
       t.ok(err);
-      return server.stop();
     });
   });
 });
 
-test('service - exposes async-callback function through rpc', function (t) {
-  return new ServicifyServer().listen().then(function (server) {
-    var ps = new ServicifyService();
+test('servicer - exposes async-callback function through rpc', function (t) {
+  return useServer(function (server) {
+    var ps = new ServicifyServicer(server);
     var identity = require('async-identity');
 
     return ps.offer(identity, {name: 'async-identity', version: '1.0.0'}).then(function (service) {
@@ -103,17 +98,17 @@ test('service - exposes async-callback function through rpc', function (t) {
       return callRpc(client, 'invoke', [10]).then(function (result) {
         t.equal(result, 10);
         return service.stop();
-      }).then(function () {
-        return server.stop();
       });
     });
   });
 });
 
-test('service - exposes async-promise function through rpc', function (t) {
-  return new ServicifyServer().listen().then(function (server) {
-    var ps = new ServicifyService();
-    var identity = function(x) { return Promise.resolve(x); }
+test('servicer - exposes async-promise function through rpc', function (t) {
+  return useServer(function(server) {
+    var ps = new ServicifyServicer(server);
+    var identity = function (x) {
+      return Promise.resolve(x);
+    };
 
     return ps.offer(identity, {name: 'identity', version: '1.0.0'}).then(function (service) {
       var client = new rpc.Client({
@@ -126,19 +121,17 @@ test('service - exposes async-promise function through rpc', function (t) {
       return callRpc(client, 'invoke', [10]).then(function (result) {
         t.equal(result, 10);
         return service.stop();
-      }).then(function () {
-        return server.stop();
       });
     });
   });
 });
 
-test('service - invocations affects load between heartbeats', function (t) {
-  return new ServicifyServer().listen().then(function (server) {
-    var ps = new ServicifyService({heartbeat: 10});
+test('servicer - invocations affects load between heartbeats', function (t) {
+  return useServer(function (server) {
+    var servicer = new ServicifyServicer({host: server.host, port: server.port, heartbeat: 10});
     var identity = require('async-identity');
 
-    return ps.offer(identity, {name: 'async-identity', version: '1.0.0'}).then(function (service) {
+    return servicer.offer(identity, {name: 'async-identity', version: '1.0.0'}).then(function (service) {
       var client = new rpc.Client({
         host: service.host,
         port: service.port,
@@ -151,16 +144,32 @@ test('service - invocations affects load between heartbeats', function (t) {
         callRpc(client, 'invoke', [2]),
         callRpc(client, 'invoke', [3])
       ]).then(function () {
-        return eventBefore(ps, 'heartbeat', 100);
+        return eventBefore(servicer, 'heartbeat', 100);
       }).then(function (heartbeat) {
-        t.ok(heartbeat.load > 0);
-        return eventBefore(ps, 'heartbeat', 100);
+        t.ok(heartbeat.load > 0, 'load should be greater than 0');
+        return eventBefore(servicer, 'heartbeat', 100);
       }).then(function (heartbeat) {
-        t.equal(heartbeat.load, 0);
+        t.equal(heartbeat.load, 0, 'load should be zero');
         return service.stop();
-      }).then(function () {
-        return server.stop();
       });
+    });
+  });
+});
+
+test('servicer - returned service has expected API', function (t) {
+  return useServer(function (server) {
+    var servicer = new ServicifyServicer({host: server.host, port: server.port, heartbeat: 10});
+    var identity = require('async-identity');
+
+    return servicer.offer(identity, {name: 'async-identity', version: '1.0.0'}).then(function (service) {
+      t.ok(service.host, 'has host');
+      t.ok(service.port, 'has port');
+      t.equal(service.load, 0, '0 load');
+      t.equal(typeof service.invoke, 'function', 'has invoke function');
+      t.ok(service.server, 'has server info');
+      t.ok(service.server.host, 'has server host');
+      t.ok(service.server.port, 'has server port');
+      return service.stop();
     });
   });
 });
