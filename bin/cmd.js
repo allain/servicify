@@ -1,9 +1,5 @@
 #!/usr/bin/env node
 
-var ServicifyService = require('../lib/service');
-
-var fs = require('fs');
-
 var argv = require('minimist')(process.argv.slice(2));
 
 if (argv.version) {
