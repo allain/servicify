@@ -57,7 +57,7 @@ test('client - exposes async-callback function through rpc', function (t) {
     var client = new rpc.Client({
       host: service.host,
       port: service.port,
-      path: '/porty',
+      path: '/servicify',
       strict: true
     });
 
@@ -72,7 +72,7 @@ test('client - exposes async-promise function through rpc', function (t) {
     var client = new rpc.Client({
       host: service.host,
       port: service.port,
-      path: '/porty',
+      path: '/servicify',
       strict: true
     });
 
@@ -91,7 +91,7 @@ test('client - invocations affects load between heartbeats', function (t) {
       var client = new rpc.Client({
         host: service.host,
         port: service.port,
-        path: '/porty',
+        path: '/servicify',
         strict: true
       });
 
@@ -102,10 +102,10 @@ test('client - invocations affects load between heartbeats', function (t) {
         callRpc(client, 'invoke', [2]),
         callRpc(client, 'invoke', [3])
       ]).then(function () {
-        return eventBefore(servicer, 'heartbeat', 10);
+        return eventBefore(servicer, 'heartbeat', 20);
       }).then(function () {
         t.ok(startLoad < service.load, startLoad + ' load < ' + service.load + ' load');
-        return eventBefore(servicer, 'heartbeat', 10);
+        return eventBefore(servicer, 'heartbeat', 20);
       }).then(function () {
         t.equal(service.load, 0);
         return service.stop();
@@ -123,6 +123,6 @@ function callRpc(client, method, params) {
       'id': uniqid()
     }, cb);
   }).then(function (res) {
-    return res.result;
+    return res ? res.result : undefined;
   });
 }

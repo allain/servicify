@@ -36,11 +36,11 @@ test('servicer - supports registering a function that returns promises', functio
     var ps = new ServicifyServicer(server);
     var identity = function (x) {
       return Promise.resolve(x);
-    }
+    };
 
     return ps.offer(identity, {name: 'identity', version: '1.0.0'}).then(function (service) {
       t.equal(typeof service.invoke, 'function', 'has invoke function');
-      return service.invoke([10]).then(function (result) {
+      return service.invoke(10).then(function (result) {
         t.equal(result, 10);
         return service.stop();
       });
@@ -91,7 +91,7 @@ test('servicer - exposes async-callback function through rpc', function (t) {
       var client = new rpc.Client({
         host: service.host,
         port: service.port,
-        path: '/porty',
+        path: '/servicify',
         strict: true
       });
 
@@ -114,7 +114,7 @@ test('servicer - exposes async-promise function through rpc', function (t) {
       var client = new rpc.Client({
         host: service.host,
         port: service.port,
-        path: '/porty',
+        path: '/servicify',
         strict: true
       });
 
@@ -126,7 +126,7 @@ test('servicer - exposes async-promise function through rpc', function (t) {
   });
 });
 
-test('servicer - invocations affects load between heartbeats', function (t) {
+test('servicer - invocations effect load between heartbeats', function (t) {
   return useServer(function (server) {
     var servicer = new ServicifyServicer({host: server.host, port: server.port, heartbeat: 10});
     var identity = require('async-identity');
@@ -135,7 +135,7 @@ test('servicer - invocations affects load between heartbeats', function (t) {
       var client = new rpc.Client({
         host: service.host,
         port: service.port,
-        path: '/porty',
+        path: '/servicify',
         strict: true
       });
 

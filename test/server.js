@@ -2,6 +2,7 @@ var ServicifyServer = require('../lib/server');
 var Promise = require('bluebird');
 
 var test = require('blue-tape');
+var request = require('request-promise');
 
 var rpc = require('node-json-rpc');
 
@@ -34,9 +35,9 @@ test('server - server has expected api', function(t) {
 test('server - is exposed as an rpc endpoints', function (t) {
   return new ServicifyServer().listen().then(function (srv) {
     var client = new rpc.Client({
-      port: 2020,
+      port: srv.port,
       host: srv.host,
-      path: '/',
+      path: '/servicify',
       strict: true
     });
 
@@ -56,8 +57,7 @@ test('server - is exposed as an rpc endpoints', function (t) {
       t.equal(offerings[0].host, '127.0.0.1');
       t.equal(offerings[0].port, 2021);
       t.equal(offerings[0].expires, 1);
-
-      return callRpc(client, 'rescind', ['a', '^1.2.3']);
+      return callRpc(client, 'rescind', ['a', '1.2.3']);
     }).then(function (rescinded) {
       t.equal(rescinded.length, 1);
       t.equal(rescinded[0].name, 'a');
@@ -84,7 +84,7 @@ function callRpc(client, method, args) {
     }, function (err, res) {
       if (err) return reject(err);
 
-      resolve(res.result);
+      resolve(res ? res.result : undefined);
     });
   });
 }

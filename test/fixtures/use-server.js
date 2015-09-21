@@ -12,7 +12,7 @@ module.exports = function useServer(serverOpts, fn) {
 
   return new ServicifyServer().listen(serverOpts).then(function (server) {
     return Promise.resolve(fn(server)).then(function () {
-      server.stop();
+      return server.stop();
     });
   });
 };
