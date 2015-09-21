@@ -5,7 +5,6 @@ var test = require('blue-tape');
 var request = require('request-promise');
 
 var rpc = require('node-json-rpc');
-
 test('server - can be created without options', function (t) {
   var server = new ServicifyServer();
   t.ok(server instanceof ServicifyServer);
@@ -21,7 +20,7 @@ test('server - supports lifecycle without arguments', function (t) {
   });
 });
 
-test('server - server has expected api', function(t) {
+test('server - server has expected api', function (t) {
   return new ServicifyServer().listen().then(function (srv) {
     t.ok(srv.host);
     t.equal(srv.port, 2020);
@@ -29,6 +28,66 @@ test('server - server has expected api', function(t) {
     t.equal(typeof srv.rescind, 'function');
     t.equal(typeof srv.offer, 'function');
     return srv.stop();
+  });
+});
+
+test('server - is exposed as a socket.io jsonrpc endpoint', function (t) {
+  return new ServicifyServer().listen().then(function (srv) {
+    return new Promise(function (resolve, reject) {
+      var socket = require('socket.io-client')('http://' + srv.host + ':' + srv.port, {
+        path: '/servicify',
+        'transports': ['websocket']
+      });
+
+      socket.on('connect', function () {
+        console.log('connected');
+      });
+
+      socket.on('error', function (err) {
+        reject(err);
+      });
+
+      socket.on('disconnect', function () {
+        resolve();
+      });
+
+      socket.emit('jsonrpc', {
+        jsonrpc: '2.0',
+        id: 1,
+        method: 'offer',
+        params: [{
+          name: 'async-identify',
+          version: '1.2.3',
+          host: '127.0.0.1',
+          port: 1234,
+          expires: 1
+        }]
+      });
+
+      socket.on('jsonrpc', function (response) {
+        t.equal(typeof response.result.id, 'string');
+        delete response.result.id; // ids are generated per offer
+
+        t.deepEqual(response, {
+          jsonrpc: '2.0',
+          id: 1,
+          result: {
+            name: 'async-identify',
+            version: '1.2.3',
+            host: '127.0.0.1',
+            port: 1234,
+            expires: 1
+          }
+        });
+
+        socket.disconnect();
+      });
+
+      socket.connect();
+    }).then(function () {
+
+      return srv.stop();
+    });
   });
 });
 
@@ -68,7 +127,7 @@ test('server - is exposed as an rpc endpoints', function (t) {
       return callRpc(client, 'resolve', ['a', '^1.0.0']);
     }).then(function (offerings) {
       t.deepEqual(offerings, []);
-    }).then(function() {
+    }).then(function () {
       return srv.stop();
     });
   });
