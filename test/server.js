@@ -39,10 +39,6 @@ test('server - is exposed as a socket.io jsonrpc endpoint', function (t) {
         'transports': ['websocket']
       });
 
-      socket.on('connect', function () {
-        console.log('connected');
-      });
-
       socket.on('error', function (err) {
         reject(err);
       });
@@ -85,7 +81,6 @@ test('server - is exposed as a socket.io jsonrpc endpoint', function (t) {
 
       socket.connect();
     }).then(function () {
-
       return srv.stop();
     });
   });
