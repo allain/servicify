@@ -82,8 +82,8 @@ test('client - exposes async-promise function through rpc', function (t) {
   });
 });
 
-
-test('client - invocations affects load between heartbeats', function (t) {
+// Since it's done in the servicer not sure this is needed
+test.skip('client - invocations affects load between heartbeats', function (t) {
   return useServicer({heartbeat: 10}, function (servicer) {
     var identity = require('async-identity');
 

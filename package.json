@@ -26,6 +26,7 @@
   "homepage": "https://github.com/allain/servificy#readme",
   "dependencies": {
     "bluebird": "^2.10.0",
+    "clone": "^1.0.2",
     "debug": "^2.2.0",
     "defaults": "^1.0.2",
     "defined": "^1.0.0",
@@ -35,7 +36,7 @@
     "get-parameter-names": "^0.2.0",
     "get-port": "^1.0.0",
     "ip": "^1.0.1",
-    "jsonrpc-processor": "^0.1.0",
+    "jsonrpc-processor": "^0.2.0",
     "minimist": "^1.2.0",
     "node-json-rpc": "0.0.1",
     "npm": "^2.14.5",

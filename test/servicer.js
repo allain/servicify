@@ -78,48 +78,6 @@ test('servicer - rejects registering a package by its relative directory', funct
   });
 });
 
-test('servicer - is exposed as a socket.io jsonrpc endpoint', function (t) {
-  return useServer(function (server) {
-    return new ServicifyServicer(server).offer('async-identity').then(function (service) {
-      return new Promise(function (resolve, reject) {
-        var socket = require('socket.io-client')('http://' + service.host + ':' + service.port, {
-          path: '/servicify',
-          'transports': ['websocket']
-        });
-
-        socket.on('error', function (err) {
-          reject(err);
-        });
-
-        socket.on('disconnect', function () {
-          resolve();
-        });
-
-        socket.emit('jsonrpc', {
-          jsonrpc: '2.0',
-          id: 1,
-          method: 'invoke',
-          params: [10]
-        });
-
-        socket.on('jsonrpc', function (response) {
-          t.deepEqual(response, {
-            jsonrpc: '2.0',
-            id: 1,
-            result: 10
-          });
-
-          socket.disconnect();
-        });
-
-        socket.connect();
-      }).then(function () {
-        return service.stop();
-      });
-    });
-  });
-});
-
 test('servicer - exposes async-callback function through rpc', function (t) {
   return useServer(function (server) {
     return new ServicifyServicer(server).offer('async-identity').then(function (service) {
@@ -149,6 +107,24 @@ test('servicer - exposes async-promise function through rpc', function (t) {
       });
 
       return callRpc(client, 'invoke', [10]).then(function (result) {
+        t.equal(result, 10);
+        return service.stop();
+      });
+    });
+  });
+});
+
+test.only('servicer - can be invoked through server', function (t) {
+  return useServer(function (server) {
+    var serverClient = new rpc.Client({
+      host: server.host,
+      port: server.port,
+      path: '/servicify',
+      strict: true
+    });
+
+    return new ServicifyServicer(server).offer('async-identity').then(function (service) {
+      return callRpc(serverClient, 'invoke', [service.id, [10]]).then(function (result) {
         t.equal(result, 10);
         return service.stop();
       });
@@ -214,6 +190,10 @@ function callRpc(client, method, params) {
       'id': uniqid()
     }, cb);
   }).then(function (res) {
+    if (res.error) {
+      throw new Error(res.error.message);
+    }
+
     return res.result;
   });
 }
