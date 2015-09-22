@@ -17,10 +17,9 @@ test('servicer - can be created without a server to connect to yet', function (t
 
 test('servicer - returned service has expected API', function (t) {
   return useServer(function (server) {
-    var ps = new ServicifyServicer(server);
     var identity = require('async-identity');
 
-    return ps.offer(identity, {name: 'async-identity', version: '1.0.0'}).then(function (service) {
+    return new ServicifyServicer(server).offer(identity, {name: 'async-identity', version: '1.0.0'}).then(function (service) {
       t.ok(service.host, 'has host');
       t.ok(service.port, 'has port');
       t.equal(service.load, 0, '0 load');
@@ -33,12 +32,11 @@ test('servicer - returned service has expected API', function (t) {
 
 test('servicer - supports registering a function that returns promises', function (t) {
   return useServer(function (server) {
-    var ps = new ServicifyServicer(server);
     var identity = function (x) {
       return Promise.resolve(x);
     };
 
-    return ps.offer(identity, {name: 'identity', version: '1.0.0'}).then(function (service) {
+    return new ServicifyServicer(server).offer(identity, {name: 'identity', version: '1.0.0'}).then(function (service) {
       t.equal(typeof service.invoke, 'function', 'has invoke function');
       return service.invoke(10).then(function (result) {
         t.equal(result, 10);
@@ -50,9 +48,7 @@ test('servicer - supports registering a function that returns promises', functio
 
 test('servicer - supports registering a package by name', function (t) {
   return useServer(function (server) {
-    var ps = new ServicifyServicer(server);
-
-    return ps.offer('async-identity').then(function (service) {
+    return new ServicifyServicer(server).offer('async-identity').then(function (service) {
       t.ok(service.host, 'has host');
       t.ok(service.port, 'has port');
       return service.stop();
@@ -62,9 +58,7 @@ test('servicer - supports registering a package by name', function (t) {
 
 test('servicer - supports registering a package by its absolute directory', function (t) {
   return useServer(function (server) {
-    var ps = new ServicifyServicer(server);
-
-    return ps.offer(__dirname + '/../node_modules/async-identity').then(function (service) {
+    return new ServicifyServicer(server).offer(__dirname + '/../node_modules/async-identity').then(function (service) {
       t.ok(service.host);
       t.ok(service.port);
       return service.stop();
@@ -74,9 +68,7 @@ test('servicer - supports registering a package by its absolute directory', func
 
 test('servicer - rejects registering a package by its relative directory', function (t) {
   return useServer(function (server) {
-    var ps = new ServicifyServicer();
-
-    return ps.offer('../node_modules/async-identity').catch(function (err) {
+    return new ServicifyServicer().offer('../node_modules/async-identity').catch(function (err) {
       t.ok(err);
     });
   });
@@ -84,10 +76,9 @@ test('servicer - rejects registering a package by its relative directory', funct
 
 test('servicer - exposes async-callback function through rpc', function (t) {
   return useServer(function (server) {
-    var ps = new ServicifyServicer(server);
     var identity = require('async-identity');
 
-    return ps.offer(identity, {name: 'async-identity', version: '1.0.0'}).then(function (service) {
+    return new ServicifyServicer(server).offer(identity, {name: 'async-identity', version: '1.0.0'}).then(function (service) {
       var client = new rpc.Client({
         host: service.host,
         port: service.port,
@@ -105,12 +96,11 @@ test('servicer - exposes async-callback function through rpc', function (t) {
 
 test('servicer - exposes async-promise function through rpc', function (t) {
   return useServer(function(server) {
-    var ps = new ServicifyServicer(server);
     var identity = function (x) {
       return Promise.resolve(x);
     };
 
-    return ps.offer(identity, {name: 'identity', version: '1.0.0'}).then(function (service) {
+    return new ServicifyServicer(server).offer(identity, {name: 'identity', version: '1.0.0'}).then(function (service) {
       var client = new rpc.Client({
         host: service.host,
         port: service.port,
