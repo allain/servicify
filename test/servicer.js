@@ -6,6 +6,7 @@ var uniqid = require('uniqid');
 var eventBefore = require('promise-event-before');
 
 var useServer = require('./fixtures/use-server');
+var offerService = require('./fixtures/offer-service');
 
 var ServicifyServicer = require('../lib/servicer');
 
@@ -160,6 +161,26 @@ test('servicer - returned service has expected API', function (t) {
       t.ok(service.server.host, 'has server host');
       t.ok(service.server.port, 'has server port');
       return service.stop();
+    });
+  });
+});
+
+test('servicer - can be invoked through the servicify server', function(t) {
+  return useServer(function(server) {
+    return new ServicifyServicer(server).offer('async-identity').then(function(service) {
+      t.ok(service.id, 'service should have an id assigned to it');
+
+      var serverClient = new rpc.Client({
+        port: server.port,
+        host: server.host,
+        path: '/servicify',
+        strict: true
+      });
+
+      return callRpc(serverClient, 'invoke', [service.id, [20]]).then(function (result) {
+        t.equal(result, 20);
+        return service.stop();
+      });
     });
   });
 });
