@@ -42,7 +42,7 @@ test('catalog -returns empty when no services resolve', function (t) {
 
 test('catalog -resolved to any service which satisfies dep', function (t) {
   var catalog = new ServicifyCatalog();
-  var now = Date.now();
+
   return Promise.all([
     catalog.offer({name: 'a', version: '1.2.3', host: '127.0.0.1', port: 12, id: 1, expires: 1}),
     catalog.offer({name: 'b', version: '1.2.3', host: '127.0.0.1', port: 1234, id: 2, expires: 2}),
@@ -58,7 +58,7 @@ test('catalog -resolved to any service which satisfies dep', function (t) {
 
 test('catalog -supports rescinding by exact spec', function (t) {
   var catalog = new ServicifyCatalog();
-  var now = Date.now();
+
   return Promise.all([
     catalog.offer({name: 'a', version: '1.2.3', host: '127.0.0.1', port: 12, expires: 1}),
     catalog.offer({name: 'b', version: '1.2.3', host: '127.0.0.1', port: 1234, id: 2, expires: 1})

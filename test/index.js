@@ -49,7 +49,7 @@ test('index - supports requiring packages that export an promise returning funct
   });
 });
 
-test('index - supports offering endpoints that are not actual packages', function (t) {
+test('index - supports offering endpoints that are not actual packages', function () {
   return useServer(function (server) {
     var dbl = function (x) {
       return x * 2;
@@ -65,7 +65,7 @@ test('index - supports offering endpoints that are not actual packages', functio
   });
 });
 
-test('index - supports requiring endpoints that are not actual packages', function (t) {
+test('index - supports requiring endpoints that are not actual packages', function () {
   return useServer(function (server) {
     var dbl = function (x) {
       return x * 2;

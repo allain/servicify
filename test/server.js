@@ -2,7 +2,6 @@ var ServicifyServer = require('../lib/server');
 var Promise = require('bluebird');
 
 var test = require('blue-tape');
-var request = require('request-promise');
 
 var rpc = require('node-json-rpc');
 
@@ -35,7 +34,7 @@ test('server - server has expected api', function(t) {
 
 test('server - is exposed as sockjs jsonrpc endpoint', function(t)  {
   return new ServicifyServer().listen().then(function (srv) {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function(resolve) {
       var client = require('node-sockjs-client')
       ('http://' + srv.host + ':' + srv.port + '/servicify-sockjs', ['xhr']);
 
@@ -52,7 +51,7 @@ test('server - is exposed as sockjs jsonrpc endpoint', function(t)  {
       };
     }).then(function() {
       return srv.stop();
-    })
+    });
   });
 });
 

@@ -6,7 +6,6 @@ var uniqid = require('uniqid');
 var eventBefore = require('promise-event-before');
 
 var useServer = require('./fixtures/use-server');
-var offerService = require('./fixtures/offer-service');
 
 var ServicifyServicer = require('../lib/servicer');
 
@@ -44,7 +43,7 @@ test('servicer - supports registering a function that returns promises', functio
         return service.stop();
       });
     });
-  })
+  });
 });
 
 test('servicer - supports registering a package by name', function (t) {
@@ -68,7 +67,7 @@ test('servicer - supports registering a package by its absolute directory', func
 });
 
 test('servicer - rejects registering a package by its relative directory', function (t) {
-  return useServer(function (server) {
+  return useServer(function () {
     return new ServicifyServicer().offer('../node_modules/async-identity').catch(function (err) {
       t.ok(err);
     });
