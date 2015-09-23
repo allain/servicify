@@ -14,6 +14,7 @@ test('server - can be created without options', function (t) {
 
 test('server - supports lifecycle without arguments', function (t) {
   return new ServicifyServer().listen().then(function (srv) {
+    console.log(srv);
     t.ok(srv);
     t.ok(srv.host);
     t.equal(srv.port, 2020);
@@ -32,7 +33,30 @@ test('server - server has expected api', function(t) {
   });
 });
 
-test('server - is exposed as an rpc endpoints', function (t) {
+test('server - is exposed as sockjs jsonrpc endpoint', function(t)  {
+  return new ServicifyServer().listen().then(function (srv) {
+    return new Promise(function(resolve, reject) {
+      var client = require('node-sockjs-client')
+      ('http://' + srv.host + ':' + srv.port + '/servicify-sockjs', ['xhr']);
+
+      client.onopen = function () {
+        client.send(JSON.stringify({jsonrpc: '2.0', method: 'resolve', params: ['test', '^1.2.3'], id: 1}));
+      };
+      client.onmessage = function (e) {
+        var result = JSON.parse(e.data);
+        t.deepEqual(result, {jsonrpc: '2.0', id: 1, result: []});
+        client.close();
+      };
+      client.onclose = function () {
+        resolve();
+      };
+    }).then(function() {
+      return srv.stop();
+    })
+  });
+});
+
+test('server - is exposed as an rpc endpoint', function (t) {
   return new ServicifyServer().listen().then(function (srv) {
     var client = new rpc.Client({
       port: srv.port,
