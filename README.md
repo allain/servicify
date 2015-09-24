@@ -1,5 +1,10 @@
 # servicify
 
+[![Build Status](https://travis-ci.org/allain/servicify.svg)](https://travis-ci.org/allain/servicify)
+[![npm](https://img.shields.io/npm/v/servicify.svg)]()
+[![npm](https://img.shields.io/npm/l/servicify.svg)]()
+
+
 **NOTE:** Work in progress!
 
 Servicify is a service registry tool that allows you to trivially turn a node package into a consumable web service.
