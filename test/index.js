@@ -1,5 +1,5 @@
 var test = require('blue-tape');
-var Promise = require('bluebird');
+var Promise = require('native-promise-only');
 var ServicifyServicer = require('../lib/servicer');
 
 var useServer = require('./fixtures/use-server');
@@ -17,8 +17,10 @@ test('index - supports requiring packages that export an async callback function
       var fn = servicify.require('async-identity');
 
       t.equal(typeof fn, 'function');
-      return Promise.fromNode(function (cb) {
-        fn(100, cb);
+      return new Promise(function(resolve, reject) {
+        fn(100, function(err, result) {
+          return err ? reject(err) : resolve(result);
+        });
       }).then(function (result) {
         t.equal(result, 100);
         return service.stop();

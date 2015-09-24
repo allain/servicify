@@ -1,5 +1,5 @@
 var test = require('blue-tape');
-var Promise = require('bluebird');
+var Promise = require('native-promise-only');
 
 var offerService = require('./fixtures/offer-service');
 var useServer = require('./fixtures/use-server');

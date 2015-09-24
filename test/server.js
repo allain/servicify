@@ -1,5 +1,5 @@
 var ServicifyServer = require('../lib/server');
-var Promise = require('bluebird');
+var Promise = require('native-promise-only');
 
 var test = require('blue-tape');
 

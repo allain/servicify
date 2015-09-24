@@ -1,6 +1,6 @@
 var test = require('blue-tape');
 
-var Promise = require('bluebird');
+var Promise = require('native-promise-only');
 var rpc = require('node-json-rpc');
 var uniqid = require('uniqid');
 var eventBefore = require('promise-event-before');
@@ -185,14 +185,16 @@ test('servicer - can be invoked through the servicify server', function(t) {
 });
 
 function callRpc(client, method, params) {
-  return Promise.fromNode(function (cb) {
+  return new Promise(function(resolve, reject) {
     client.call({
       'jsonrpc': '2.0',
       'method': method,
       'params': params,
       'id': uniqid()
-    }, cb);
-  }).then(function (res) {
-    return res.result;
+    }, function(err, res) {
+      if (err) return reject(err);
+      if (res.error) return reject(new Error(res.error.message));
+      resolve(res.result);
+    });
   });
 }

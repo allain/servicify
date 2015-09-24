@@ -1,5 +1,5 @@
 var test = require('blue-tape');
-var Promise = require('bluebird');
+var Promise = require('native-promise-only');
 
 var ServicifyCatalog = require('../lib/catalog');
 
@@ -154,7 +154,9 @@ test('catalog -gc deregisters services that have been dormant too long', functio
   var catalog = new ServicifyCatalog();
 
   return catalog.offer({name: 'a', version: '1.2.3', host: '127.0.0.1', port: 2021, expires: Date.now() + 5}).then(function () {
-    return Promise.delay(20);
+    return new Promise(function(resolve) {
+      setTimeout(resolve, 20);
+    });
   }).then(function() {
     catalog.gc();
   }).then(function() {
