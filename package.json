@@ -7,8 +7,8 @@
     "servicify": "./bin/cmd.js"
   },
   "scripts": {
-    "test": "faucet test/*.js",
-    "lint": "jshint --config .jshintrc index.js test/*.js"
+    "test": "blue-tape test/*.js",
+    "lint": "jshint --config .jshintrc index.js test/*.js lib/*.js"
   },
   "repository": {
     "type": "git",
@@ -53,8 +53,6 @@
   "devDependencies": {
     "async-identity": "^1.0.1",
     "blue-tape": "^0.1.10",
-    "faucet": "0.0.1",
-    "jshint": "^2.8.0",
     "promise-event-before": "^1.0.0",
     "promise-identity": "^1.0.0"
   }
