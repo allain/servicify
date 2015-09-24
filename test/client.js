@@ -50,7 +50,7 @@ test.skip('client - invocations affects load between heartbeats', function (t) {
 test('client - will go through server if direct connection fails', function(t) {
   return useServer(function() {
     return new ServicifyServicer().offer(require('promise-identity'),
-    {name: 'promise-identity', version: '1.1.1', host: '192.168.1.254'}).then(function(service) {
+    {name: 'promise-identity', version: '1.1.1', host: '10.0.0.1'}).then(function(service) {
       return new ServicifyClient().resolve('promise-identity', '1.1.1').then(function(fn) {
         return fn(10).then(function(result) {
           t.equal(result, 10);

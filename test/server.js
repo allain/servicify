@@ -13,7 +13,6 @@ test('server - can be created without options', function (t) {
 
 test('server - supports lifecycle without arguments', function (t) {
   return new ServicifyServer().listen().then(function (srv) {
-    console.log(srv);
     t.ok(srv);
     t.ok(srv.host);
     t.equal(srv.port, 2020);
