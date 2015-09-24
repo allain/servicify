@@ -116,7 +116,7 @@ test('servicer - exposes async-promise function through rpc', function (t) {
   });
 });
 
-test('servicer - invocations effect load between heartbeats', function (t) {
+test.skip('servicer - invocations effect load between heartbeats', function (t) {
   return useServer(function (server) {
     var servicer = new ServicifyServicer({host: server.host, port: server.port, heartbeat: 10});
     var identity = require('async-identity');
