@@ -20,12 +20,16 @@ module.exports = function (argv) {
   var required = argv._[2] || '*';
 
   callRpc(serviceConnection, 'resolve', [name, required]).then(function(resolutions) {
-    resolutions.sort(function(a, b) {
-      return a.load - b.load;
-    });
-    resolutions.forEach(function(r) {
-      console.log(r.host + ':' + r.port, r.name + '@' + r.version, 'with load', r.load);
-    });
+    if (resolutions.length) {
+      resolutions.sort(function (a, b) {
+        return a.load - b.load;
+      });
+      resolutions.forEach(function (r) {
+        console.log(r.host + ':' + r.port, r.name + '@' + r.version, 'with load', r.load);
+      });
+    } else {
+      console.log('no services found');
+    }
   });
 };
 
