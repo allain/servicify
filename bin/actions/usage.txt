@@ -16,3 +16,4 @@ Resolve
   Displays a list of servicy services registered that match the dependency.
 
   Example: servicify resolve async-identity ^1.0.0
+
