@@ -1,4 +1,5 @@
 var test = require('blue-tape');
+var debug = require('debug')('servicify-servicer-test');
 
 var Promise = require('native-promise-only');
 var rpc = require('node-json-rpc');
@@ -184,6 +185,32 @@ test('servicer - can be invoked through the servicify server', function(t) {
   });
 });
 
+test('servicer - throws when offered is not a package name and no spec is given', function(t) {
+  return new ServicifyServicer().offer(function() {}).catch(function(err) {
+    t.ok(err instanceof Error);
+    t.equal(err.message, 'spec not given with offer');
+  });
+});
+
+test.only('servicer - when error occurs in servicer, error flows through when proxing', function(t) {
+  return useServer(function(server) {
+    return new ServicifyServicer(server).offer(function() { return Promise.reject(new Error('error')); }, {name: 'a', version: '1.0.0'}).then(function(service) {
+      var serverClient = new rpc.Client({
+        port: server.port,
+        host: server.host,
+        path: '/servicify',
+        strict: true
+      });
+
+      return callRpc(serverClient, 'invoke', [service.id, [20]]).catch(function (err) {
+        t.ok(err instanceof Error);
+        t.equal(err.message, 'error');
+        return service.stop();
+      });
+    });
+  });
+});
+
 function callRpc(client, method, params) {
   return new Promise(function(resolve, reject) {
     client.call({
@@ -192,6 +219,7 @@ function callRpc(client, method, params) {
       'params': params,
       'id': uniqid()
     }, function(err, res) {
+      debug('rpc http response received: %j', res);
       if (err) return reject(err);
       if (res.error) return reject(new Error(res.error.message));
       resolve(res.result);
