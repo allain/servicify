@@ -1,6 +1,6 @@
 {
   "name": "servicify",
-  "version": "0.6.5",
+  "version": "0.6.6",
   "description": "A service registry tool that allows you to trivially turn a node package into a consumable web service.",
   "main": "index.js",
   "bin": {
