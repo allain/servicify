@@ -192,7 +192,7 @@ test('servicer - throws when offered is not a package name and no spec is given'
   });
 });
 
-test.only('servicer - when error occurs in servicer, error flows through when proxing', function(t) {
+test('servicer - when error occurs in servicer, error flows through when proxing', function(t) {
   return useServer(function(server) {
     return new ServicifyServicer(server).offer(function() { return Promise.reject(new Error('error')); }, {name: 'a', version: '1.0.0'}).then(function(service) {
       var serverClient = new rpc.Client({

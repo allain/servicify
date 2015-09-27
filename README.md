@@ -7,9 +7,10 @@
 
 **NOTE:** Work in progress!
 
-Servicify is a service registry tool that allows you to trivially turn a node package into a consumable web service.
+Servicify is a tool for registering and consuming npm packages as micro services.
 
-Like seaport, it supports semver, so that you can have multiple versions of a service running at the same time.
+By using semver for its resolution, you can have multiple versions of a service running at the same time, and you can
+query using semver semantics.
 
 ## Installation
 
@@ -27,7 +28,7 @@ servicify listen [--port 2020] [--host 127.0.0.1]
 ### Register a package with the server
 
 ```bash
-servicify register PACKAGE-NAME [--port 2020] [--host 127.0.0.1]
+servicify offer PACKAGE-NAME [--port 2020] [--host 127.0.0.1]
 ```
 The port and host here are used to point to the server started above.
 
