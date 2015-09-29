@@ -1,5 +1,6 @@
 var ServicifyClient = require('./lib/client');
-var getParamNames = require('get-parameter-names');
+
+var buildInvoker = require('./lib/invokers');
 
 function Servicify(opts) {
   if (!(this instanceof Servicify)) return new Servicify(opts);
@@ -11,8 +12,9 @@ Servicify.prototype.require = function(packageName, opts) {
   var client = this.client;
   opts = opts || {};
 
-  var exportType = opts.type || determineExportType(packageName);
-  if (exportType === 'callback') {
+  var exportType = opts.type || buildInvoker(packageName).type;
+
+  if (exportType === 'callback-function') {
     return function() {
       var params = [].slice.call(arguments);
 
@@ -20,7 +22,7 @@ Servicify.prototype.require = function(packageName, opts) {
         fn.apply(null, params);
       });
     };
-  } else if (exportType === 'promised') {
+  } else if (exportType === 'promised-function') {
     return function() {
       var params = [].slice.call(arguments);
 
@@ -30,22 +32,5 @@ Servicify.prototype.require = function(packageName, opts) {
     };
   }
 };
-
-function determineExportType(packageName) {
-  var ex = require(packageName);
-
-  if (typeof ex === 'function') {
-    // TODO: determine a better way than parameter name inspection for this
-    var paramNames = getParamNames(ex);
-    var usesCallback = paramNames[paramNames.length - 1].match(/^cb|callback$/g);
-    if (usesCallback) {
-      return 'callback';
-    } else {
-      return 'promised';
-    }
-  } else {
-    throw new Error('unsupported package export type');
-  }
-}
 
 module.exports = Servicify;

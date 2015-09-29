@@ -51,35 +51,3 @@ test('index - supports requiring packages that export an promise returning funct
   });
 });
 
-test('index - supports offering endpoints that are not actual packages', function () {
-  return useServer(function (server) {
-    var dbl = function (x) {
-      return x * 2;
-    };
-
-    // random package name
-    var name = 'dbl' + Math.round(Math.random() * 10000);
-    var dblSpec = {name: name, version: '1.3.5'};
-
-    return new ServicifyServicer({host: server.host}).offer(dbl, dblSpec).then(function (service) {
-      return service.stop();
-    });
-  });
-});
-
-test('index - supports requiring endpoints that are not actual packages', function () {
-  return useServer(function (server) {
-    var dbl = function (x) {
-      return x * 2;
-    };
-
-    // random package name
-    var name = 'dbl' + Math.round(Math.random() * 10000);
-    var dblSpec = {name: name, version: '1.3.5'};
-
-    return new ServicifyServicer({host: server.host}).offer(dbl, dblSpec).then(function (service) {
-      return service.stop();
-    });
-  });
-});
-

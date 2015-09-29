@@ -4,10 +4,17 @@
 [![npm](https://img.shields.io/npm/v/servicify.svg)]()
 [![npm](https://img.shields.io/npm/l/servicify.svg)]()
 
+## Introduction
 
-**NOTE:** Work in progress!
+**NOTE: API is still in flux until I hit v1.0.0** 
 
-Servicify is a tool for registering and consuming npm packages as micro services.
+Servicify is a tool for trivially registering and consuming npm packages as microservices.
+
+It's a wrapper around Paolo Ardoino's fantastic [pigato](https://github.com/prdn/pigato) library, so it uses 
+ZeroMQ under the hood.
+
+I've extended it to use semver in its resolution algorithm and have my fingers crossed that it'll get merged in.
+If not, it's not a huge deal; I suspect I can monkey patch it, but of course I'd rather not.
 
 By using semver for its resolution, you can have multiple versions of a service running at the same time, and you can
 query using semver semantics.
@@ -17,15 +24,14 @@ query using semver semantics.
 ```bash
 npm install -g servicify
 ```
-
 ## Usage
 
 ### Start the server
 ```bash
-servicify listen [--port 2020] [--host 127.0.0.1]
+servicify listen [--port 2020] [--host 0.0.0.0]
 ```
 
-### Register a package with the server
+### Start offering a package as a service
 
 ```bash
 servicify offer PACKAGE-NAME [--port 2020] [--host 127.0.0.1]
@@ -34,11 +40,11 @@ The port and host here are used to point to the server started above.
 
 **Note:** If the package cannot be resolved locally, it is resolved by examining the globally installed packages.
 
-### Consume the registered service
+### Consume the services
 
 ```js
 // With Servicify
-var servicify = require('servicify')();
+var servicify = require('servicify')({host: '127.0.0.1', port: 2020});
 var identitySrv = servicify.require('async-identity');
 identitySrv(10, function(err, result) {
   if (err) return console.error(err); 

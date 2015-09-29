@@ -1,7 +1,7 @@
 servicify command [options]
 
 Start Server
-  servicify listen [--host 127.0.0.1] [--port 2020]
+  servicify listen [--host 0.0.0.0] [--port 2020]
 
 Offer Package
   servicify offer PKGNAME [--host 127.0.0.1] [--port 2020]
@@ -9,11 +9,3 @@ Offer Package
   If the package cannot be resolved locally, servicify will try in the globally installed packages.
 
   Example: servicify offer async-identity
-
-Resolve
-  servicify resolve PKGNAME [VERSION] [--host 127.0.0.1] [--port 2020]
-
-  Displays a list of servicy services registered that match the dependency.
-
-  Example: servicify resolve async-identity ^1.0.0
-

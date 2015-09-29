@@ -9,7 +9,6 @@ if (argv.version) {
 var actions = {
   listen: require('./actions/listen'),
   offer: require('./actions/offer'),
-  resolve: require('./actions/resolve'),
   usage: require('./actions/usage')
 };
 

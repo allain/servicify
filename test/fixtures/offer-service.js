@@ -1,5 +1,3 @@
-var defaults = require('defaults');
-
 var useServicer = require('./use-servicer');
 
 module.exports = function offerService(service, spec, fn) {

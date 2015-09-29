@@ -2,60 +2,51 @@ var test = require('blue-tape');
 var Promise = require('native-promise-only');
 
 var offerService = require('./fixtures/offer-service');
-var useServer = require('./fixtures/use-server');
-var useServicer = require('./fixtures/use-servicer');
+var debug = require('debug')('test-client');
 
 var ServicifyClient = require('../lib/client');
-var ServicifyServicer = require('../lib/servicer');
-var eventBefore = require('promise-event-before');
 
 test('client - can be created without a server to connect to yet', function (t) {
-  var ps = new ServicifyClient();
-  t.ok(ps instanceof ServicifyClient);
+  var client = new ServicifyClient();
+  t.ok(client instanceof ServicifyClient);
+  client.stop();
   t.end();
 });
 
-test('client - supports registering a function that returns promises', function (t) {
+test('client - supports resolving to a function that returns promises', function (t) {
   return offerService(require('promise-identity'), {
     name: 'promise-identity',
     version: '1.1.1'
   }, function () {
-    return ServicifyClient().resolve('promise-identity', '^1.1.1').then(function(fn) {
-      return fn(10).then(function(val) {
+    var client = ServicifyClient();
+    return client.resolve('promise-identity@^1.1.1', [10]).then(function (fn) {
+      t.equal(typeof fn, 'function');
+      return fn(10).then(function (val) {
         t.equal(val, 10);
+        return client.stop();
       });
     });
   });
 });
 
-test.skip('client - invocations affects load between heartbeats', function (t) {
-  return useServicer({heartbeat: 15}, function(servicer) {
-    return servicer.offer('promise-identity').then(function(service) {
-      var startLoad = service.load;
-
-      return ServicifyClient().resolve('promise-identity', '^1.1.1').then(function(fn) {
-        return Promise.all([fn(1), fn(2), fn(3)]).then(function() {
-          return eventBefore(servicer, 'heartbeat', 20);
-        }).then(function () {
-          t.ok(startLoad < service.load, startLoad + ' load < ' + service.load + ' load');
-          return eventBefore(servicer, 'heartbeat', 20);
-        }).then(function () {
-          t.equal(service.load, 0);
+test('client - supports resolving to a function that using callback signature', function (t) {
+  return offerService(require('async-identity'), {
+    name: 'async-identity',
+    version: '1.1.1'
+  }, function () {
+    var client = new ServicifyClient();
+    return client.resolve('async-identity@^1.0.0').then(function (fn) {
+      t.equal(typeof fn, 'function');
+      return new Promise(function(resolve) {
+        fn(10, function (err, val) {
+          t.error(err);
+          t.equal(val, 10);
+          resolve(val);
         });
-      });
-    });
-  });
-});
-
-test('client - will go through server if direct connection fails', function(t) {
-  return useServer(function() {
-    return new ServicifyServicer().offer(require('promise-identity'),
-    {name: 'promise-identity', version: '1.1.1', host: '10.0.0.1'}).then(function(service) {
-      return new ServicifyClient().resolve('promise-identity', '1.1.1').then(function(fn) {
-        return fn(10).then(function(result) {
-          t.equal(result, 10);
-          return service.stop();
-        });
+      }).then(function(val) {
+        debug(val);
+        debug('stopping');
+        return client.stop();
       });
     });
   });
