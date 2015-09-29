@@ -1,5 +1,3 @@
-language: node_js
-
 env:
 - ZMQ="git://github.com/zeromq/zeromq4-1.git -b v4.1.3" SODIUM="git://github.com/jedisct1/libsodium.git -b 1.0.3"
 before_install:
