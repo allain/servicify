@@ -21,6 +21,7 @@ before_install:
 - cd ..
 language: node_js
 node_js:
-  - "4.1"
-  - "0.12"
+#  - "4.1" zmq seems to fail when installing on travis but works locally... strange
+- "iojs-v2.5.0"
+- "0.12"
 script: travis_retry npm test
