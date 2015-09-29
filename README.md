@@ -60,6 +60,4 @@ identity(10, function(err, result) {
   console.log(result);
 });
 ```
-
-
-
+![Servicify All The Things!](http://cdn.meme.am/instances/500x/40263771.jpg)
