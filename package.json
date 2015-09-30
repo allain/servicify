@@ -34,7 +34,7 @@
     "npm": "^3.3.4",
     "object-values": "^1.0.0",
     "package-path": "0.0.1",
-    "pigato": "git@github.com:prdn/pigato.git#master",
+    "pigato": "git@github.com:allain/pigato.git#master",
     "propper": "^1.0.2",
     "read-pkg": "^1.1.0",
     "semver": "^5.0.3"
