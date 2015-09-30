@@ -36,6 +36,7 @@
     "package-path": "0.0.1",
     "pigato": "git@github.com:prdn/pigato.git#master",
     "propper": "^1.0.2",
+    "read-pkg": "^1.1.0",
     "semver": "^5.0.3"
   },
   "devDependencies": {
