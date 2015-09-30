@@ -25,23 +25,23 @@
   },
   "homepage": "https://github.com/allain/servificy#readme",
   "dependencies": {
-    "debug": "^2.2.0",
-    "defaults": "^1.0.2",
-    "fj-flatten": "^1.0.0",
-    "get-parameter-names": "^0.2.0",
-    "minimist": "^1.2.0",
-    "native-promise-only": "^0.8.1",
-    "npm": "^3.3.4",
-    "object-values": "^1.0.0",
+    "debug": "2.2.0",
+    "defaults": "1.0.2",
+    "fj-flatten": "1.0.0",
+    "get-parameter-names": "0.2.0",
+    "minimist": "1.2.0",
+    "native-promise-only": "0.8.1",
+    "npm": "3.3.4",
+    "object-values": "1.0.0",
     "package-path": "0.0.1",
     "pigato": "git@github.com:prdn/pigato.git#master",
-    "propper": "^1.0.2",
-    "read-pkg": "^1.1.0",
-    "semver": "^5.0.3"
+    "propper": "1.0.2",
+    "read-pkg": "1.1.0",
+    "semver": "5.0.3"
   },
   "devDependencies": {
-    "async-identity": "^1.0.1",
-    "blue-tape": "^0.1.10",
-    "promise-identity": "^1.0.0"
+    "async-identity": "1.0.1",
+    "blue-tape": "0.1.10",
+    "promise-identity": "1.1.1"
   }
 }
