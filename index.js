@@ -14,7 +14,7 @@ Servicify.prototype.require = function(packageName, opts) {
 
   opts = defaults(opts, {});
   if (!opts.type) {
-    opts.type = buildInvoker(packageName).type
+    opts.type = buildInvoker(packageName).type;
   }
 
   if (opts.type === 'callback-function') {
@@ -34,7 +34,7 @@ Servicify.prototype.require = function(packageName, opts) {
       });
     };
   } else {
-    throw new Error('Invalid export type: ' + exportType)
+    throw new Error('Invalid export type: ' + opts.type);
   }
 };
 
