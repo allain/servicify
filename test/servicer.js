@@ -40,6 +40,17 @@ test('servicer - supports registering a function that returns promises', functio
   });
 });
 
+test('servicer - supports specfying properties in a package\'s package.json', function(t) {
+  return useServer(function(server) {
+    return new ServicifyServicer(server).offer(require.resolve('blahblah')).then(function(service) {
+      t.ok(service);
+      t.equal(service.timeout, 10);
+      t.equal(service.param, 'test param');
+      return service.stop();
+    });
+  });
+});
+
 test('servicer - supports registering a package by name', function (t) {
   return useServer(function (server) {
     return new ServicifyServicer(server).offer('async-identity').then(function (service) {
@@ -50,6 +61,18 @@ test('servicer - supports registering a package by name', function (t) {
     });
   });
 });
+
+test('servicer - supports registering a package using an absolute path to its entry point', function (t) {
+  return useServer(function (server) {
+    return new ServicifyServicer(server).offer(require.resolve('blahblah')).then(function (service) {
+      return service.invoke(10).then(function (result) {
+        t.equal(result, 10);
+        return service.stop();
+      });
+    });
+  });
+});
+
 
 test('servicer - supports registering a package by its absolute directory', function (t) {
   return useServer(function (server) {
@@ -62,10 +85,23 @@ test('servicer - supports registering a package by its absolute directory', func
   });
 });
 
-test('servicer - rejects registering a package by its relative directory', function (t) {
+test('servicer - supports registering a package by directory even when main isn\'t index.js', function (t) {
+  return useServer(function (server) {
+    return new ServicifyServicer(server).offer(__dirname + '/node_modules/blahblah').then(function (service) {
+      return service.invoke(10).then(function (result) {
+        t.equal(result, 10);
+        return service.stop();
+      });
+    });
+  });
+});
+
+test('servicer - supports registering a package by its relative path', function (t) {
   return useServer(function () {
-    return new ServicifyServicer().offer('../node_modules/async-identity').catch(function (err) {
-      t.ok(err);
+    return new ServicifyServicer().offer('../node_modules/async-identity').then(function (service) {
+      t.ok(service);
+      t.equal(service.type, 'callback-function');
+      return service.stop();
     });
   });
 });
