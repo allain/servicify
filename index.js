@@ -12,11 +12,11 @@ function Servicify(opts) {
 Servicify.prototype.require = function(packageName, opts) {
   var client = this.client;
 
-  opts = defaults(opts, {});
+  opts = opts || {};
 
   var invoker;
   if (opts.type) {
-    invoker = require('/lib/invokers/' + opts.type);
+    invoker = require('./lib/invokers/' + opts.type);
   } else {
     invoker = buildInvoker(packageName);
   }
