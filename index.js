@@ -13,29 +13,15 @@ Servicify.prototype.require = function(packageName, opts) {
   var client = this.client;
 
   opts = defaults(opts, {});
-  if (!opts.type) {
-    opts.type = buildInvoker(packageName).type;
-  }
 
-  if (opts.type === 'callback-function') {
-    return function() {
-      var params = [].slice.call(arguments);
-
-      client.resolve(packageName, opts).then(function(fn) {
-        fn.apply(null, params);
-      });
-    };
-  } else if (opts.type === 'promised-function') {
-    return function() {
-      var params = [].slice.call(arguments);
-
-      return client.resolve(packageName, opts).then(function(fn) {
-        return fn.apply(null, params);
-      });
-    };
+  var invoker;
+  if (opts.type) {
+    invoker = require('/lib/invokers/' + opts.type);
   } else {
-    throw new Error('Invalid export type: ' + opts.type);
+    invoker = buildInvoker(packageName);
   }
+
+  return invoker.build(client.resolve(packageName, opts));
 };
 
 module.exports = Servicify;
