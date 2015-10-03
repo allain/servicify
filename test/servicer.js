@@ -11,11 +11,10 @@ test('servicer - can be created without a server to connect to yet', function (t
   t.end();
 });
 
+
 test('servicer - returned service has expected API', function (t) {
   return useServer(function (server) {
-    var identity = require('async-identity');
-
-    return new ServicifyServicer(server).offer(identity, {name: 'async-identity', version: '1.0.0'}).then(function (service) {
+    return new ServicifyServicer(server).offer('async-identity').then(function (service) {
       t.equal(typeof service.invoke, 'function', 'has invoke function');
       t.deepEqual(service.server, {host: server.host, port: server.port}, 'has server location');
       return service.stop();
@@ -105,6 +104,8 @@ test('servicer - supports registering a package by its relative path', function 
     });
   });
 });
+
+
 
 test('servicer - can be invoked through server', function (t) {
   return useServer(function (server) {

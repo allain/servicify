@@ -7,12 +7,7 @@ var offerService = require('./fixtures/offer-service');
 
 test('index - supports requiring packages that export an async callback function', function (t) {
   return useServer(function (server) {
-    var identity = require('async-identity');
-
-    return new ServicifyServicer({host: server.host}).offer(identity, {
-      name: 'async-identity',
-      version: '1.2.3'
-    }).then(function (service) {
+    return new ServicifyServicer({host: server.host}).offer('async-identity').then(function (service) {
       var servicify = require('..')();
 
       var fn = servicify.require('async-identity');
@@ -47,15 +42,10 @@ test.skip('servicer - local requires override props defined in package.json', fu
 
 test('index - supports requiring packages that export an promise returning function', function (t) {
   return useServer(function (server) {
-    var identity = require('promise-identity');
-
-    return new ServicifyServicer({host: server.host}).offer(identity, {
-      name: 'promise-identity',
-      version: '1.2.3'
-    }).then(function (service) {
+    return new ServicifyServicer({host: server.host}).offer('promise-identity').then(function (service) {
       var servicify = require('..')();
 
-      var fn = servicify.require('promise-identity');
+      var fn = servicify.require('promise-identity@^1.x.x');
 
       t.equal(typeof fn, 'function');
 
