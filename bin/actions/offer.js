@@ -31,7 +31,7 @@ module.exports = function (argv) {
     if (err.code === 'MODULE_NOT_FOUND') {
       console.error('could not resolve package:', targetName);
     } else if (err.code === 'ECONNREFUSED') {
-      console.error('unable to connect to server at', serverHost + ':' + serverPort)
+      console.error('unable to connect to server at', serverHost + ':' + serverPort);
     } else {
       console.error(err.message);
       console.error(err);

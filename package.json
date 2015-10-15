@@ -2,7 +2,7 @@
   "name": "servicify",
   "version": "0.8.1",
   "description": "A service registry tool that allows you to trivially turn a node package into a consumable web service.",
-  "main": "index.js",
+  "main": "./lib/servicify.js",
   "bin": {
     "servicify": "./bin/cmd.js"
   },

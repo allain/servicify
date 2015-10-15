@@ -10,54 +10,44 @@
 
 Servicify is a tool for trivially registering and consuming npm packages as microservices.
 
-It's a wrapper around Paolo Ardoino's fantastic [pigato](https://github.com/prdn/pigato) library, so it uses 
-ZeroMQ under the hood.
+I'm intending it to support multiple-backends since each backend comes with trade-offs.
 
-I've extended it to use semver in its resolution algorithm and have my fingers crossed that it'll get merged in.
-If not, it's not a huge deal; I suspect I can monkey patch it, but of course I'd rather not.
-
-By using semver for its resolution, you can have multiple versions of a service running at the same time, and you can
-query using semver semantics.
+Service requests are done using semver which supports having multiple versions of a service in deployment at the same time.
 
 ## Installation
 
 ```bash
-npm install -g servicify
-```
-## Usage
-
-### Start the server
-```bash
-servicify listen [--port 2020] [--host 0.0.0.0]
+npm install servicify
 ```
 
-### Start offering a package as a service
+## API
 
-```bash
-servicify offer PACKAGE-NAME [--port 2020] [--host 127.0.0.1]
-```
-The port and host here are used to point to the server started above.
+Servicify's API is deliberately small. It's a tool, not a lifestyle.
 
-**Note:** If the package cannot be resolved locally, it is resolved by examining the globally installed packages.
+### Servicify([opts])
 
-### Consume the services
+It's API has three things Servicify.listen, Servicify.offer, Servicify.require
 
-```js
-// With Servicify
-var servicify = require('servicify')({host: '127.0.0.1', port: 2020});
-var identitySrv = servicify.require('async-identity');
-identitySrv(10, function(err, result) {
-  if (err) return console.error(err); 
-  
-  console.log(result);
-});
+### Servicify.listen([opts]) : Promise
 
-// Without Servicify
-var identity = require('async-identity');
-identity(10, function(err, result) {
-  if (err) return console.error(err); 
-  
-  console.log(result);
-});
-```
+Starts a servicify registry making it possible for services to be found and for clients to consume them.
+ 
+It returns a promise that resolves to an object with a .stop() method for turning the server off.
+
+
+### Servicify.offer(offering[, offeringSpec]) : Promise
+
+The offer method makes its offering available to consumers.
+
+Offerings can be:
+
+1. an asynchronous function (callback, or promised) and a spec of the form {name: 'NAME', version: 'SEMVER'}
+2. a package name that exports one of #1
+
+offer returns a promise which resolves to an object with a stop and an invoke method.
+
+### Servicify.require(requirement[, type])
+
+
+
 ![Servicify All The Things!](http://cdn.meme.am/instances/500x/40263771.jpg)
