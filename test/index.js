@@ -12,7 +12,7 @@ test('index - supports requiring packages that export an async callback function
 
       var fn = servicify.require('async-identity');
 
-      t.equal(typeof fn, 'function');
+      t.equal(typeof fn, 'function', 'require returns a function');
 
       var value = Math.random();
 
@@ -21,7 +21,7 @@ test('index - supports requiring packages that export an async callback function
           return err ? reject(err) : resolve(result);
         });
       }).then(function (result) {
-        t.equal(result, value);
+        t.equal(result, value, 'returns correct result');
         return service.stop();
       });
     });
@@ -34,6 +34,7 @@ test.skip('servicer - local requires override props defined in package.json', fu
     var servicify = require('..')();
 
     var fn = servicify.require('delay@1.0.0', {timeout: 0, type: 'promised-function'});
+
     return fn(100).then(function () {
       t.fail();
     }, function (err) {
@@ -50,12 +51,12 @@ test('index - supports requiring packages that export an promise returning funct
 
       var fn = servicify.require('promise-identity@^1.x.x');
 
-      t.equal(typeof fn, 'function');
+      t.equal(typeof fn, 'function', 'exposes function');
 
       var value = Math.random();
 
       return fn(value).then(function (result) {
-        t.equal(result, value);
+        t.equal(result, value, 'returns correct result');
         return service.stop();
       });
     });

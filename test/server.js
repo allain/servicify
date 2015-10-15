@@ -4,15 +4,15 @@ var test = require('blue-tape');
 
 test('server - can be created without options', function (t) {
   var server = new ServicifyServer();
-  t.ok(server instanceof ServicifyServer);
+  t.ok(server instanceof ServicifyServer, 'returns SericifyServer instance from constructor');
   t.end();
 });
 
 test('server - supports lifecycle without arguments', function (t) {
   return new ServicifyServer().listen().then(function (srv) {
-    t.ok(srv);
-    t.ok(srv.host);
-    t.equal(srv.port, 2020);
+    t.equal(typeof srv, 'object', 'returns a service object that can be used to stop it');
+    t.ok(srv.host, 'exposes host');
+    t.equal(srv.port, 2020, 'defaults to port');
     return srv.stop();
   });
 });

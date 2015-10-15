@@ -99,8 +99,8 @@ test('servicer - supports registering a package by directory even when main isn\
 test('servicer - supports registering a package by its relative path', function (t) {
   return useServer(function () {
     return new ServicifyServicer().offer('../node_modules/async-identity').then(function (service) {
-      t.equal(typeof service, 'object');
-      t.equal(service.type, 'callback-function');
+      t.equal(typeof service, 'object', 'expects offer request to return an object that can be used to stop it');
+      t.equal(service.type, 'callback-function', 'has correct service type');
       return service.stop();
     });
   });
@@ -109,7 +109,7 @@ test('servicer - supports registering a package by its relative path', function 
 test('servicer - throws when offered is not a package name and no spec is given', function (t) {
   return new ServicifyServicer().offer(function () {
   }).catch(function (err) {
-    t.ok(err instanceof Error);
-    t.equal(err.message, 'spec not given with offer');
+    t.ok(err instanceof Error, 'expects an Error');
+    t.equal(err.message, 'spec not given with offer', 'correct message');
   });
 });
