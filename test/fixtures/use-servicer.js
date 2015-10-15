@@ -12,7 +12,7 @@ module.exports = function useServicer(servicerOpts, fn) {
 
   servicerOpts = defaults(servicerOpts, {host: '127.0.0.1', port: 2020, heartbeat: 10000});
 
-  return useServer(servicerOpts, function(server) {
+  return useServer(servicerOpts, function() {
     return fn(new ServicifyServicer(servicerOpts));
   });
 };

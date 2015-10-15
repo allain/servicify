@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "blue-tape test/*.js",
-    "lint": "jshint --config .jshintrc index.js test/*.js lib/*.js"
+    "lint": "eslint --config .eslintrc index.js test/*.js lib/*.js"
   },
   "repository": {
     "type": "git",

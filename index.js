@@ -1,7 +1,6 @@
 var ServicifyClient = require('./lib/client');
 
 var buildInvoker = require('./lib/invokers');
-var defaults = require('defaults');
 
 function Servicify(opts) {
   if (!(this instanceof Servicify)) return new Servicify(opts);

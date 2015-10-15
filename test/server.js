@@ -19,10 +19,9 @@ test('server - supports lifecycle without arguments', function (t) {
 
 test('server - server has expected api', function(t) {
   return new ServicifyServer().listen().then(function (srv) {
-    t.ok(srv.host);
-    t.equal(srv.port, 2020);
-    t.equal(typeof srv.stop, 'function');
-    t.equal(typeof srv.invoke, 'function');
+    t.ok(srv.host, 'exposes host');
+    t.equal(srv.port, 2020, 'defaults to port 2020');
+    t.equal(typeof srv.stop, 'function', 'has a stop method');
     return srv.stop();
   });
 });

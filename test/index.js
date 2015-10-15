@@ -13,12 +13,15 @@ test('index - supports requiring packages that export an async callback function
       var fn = servicify.require('async-identity');
 
       t.equal(typeof fn, 'function');
+
+      var value = Math.random();
+
       return new Promise(function (resolve, reject) {
-        fn(100, function (err, result) {
+        fn(value, function (err, result) {
           return err ? reject(err) : resolve(result);
         });
       }).then(function (result) {
-        t.equal(result, 100);
+        t.equal(result, value);
         return service.stop();
       });
     });
@@ -27,12 +30,12 @@ test('index - supports requiring packages that export an async callback function
 
 // Skipped because I'm not sure how to slow down the zmq enough to have the request timeout
 test.skip('servicer - local requires override props defined in package.json', function (t) {
-  return offerService(require.resolve('delay'), function (service) {
+  return offerService(require.resolve('delay'), function () {
     var servicify = require('..')();
 
     var fn = servicify.require('delay@1.0.0', {timeout: 0, type: 'promised-function'});
     return fn(100).then(function () {
-      t.fail()
+      t.fail();
     }, function (err) {
       t.ok(err, 'should have timed out');
     });
@@ -49,8 +52,10 @@ test('index - supports requiring packages that export an promise returning funct
 
       t.equal(typeof fn, 'function');
 
-      return fn(100).then(function (result) {
-        t.equal(result, 100);
+      var value = Math.random();
+
+      return fn(value).then(function (result) {
+        t.equal(result, value);
         return service.stop();
       });
     });
