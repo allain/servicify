@@ -1,20 +1,16 @@
-var ServicifyServicer = require('../../lib/servicer');
 var npm = require('npm');
+
+var servicify = require('../..');
 
 module.exports = function (argv) {
   var serverHost = argv.host || '127.0.0.1';
   var serverPort = argv.port || 2020;
-  var service = new ServicifyServicer({
-    host: serverHost,
-    port: serverPort
-  });
 
   var targetName = argv._[1];
 
-  service.offer(targetName).then(function (r) {
-    console.log('offering local', r.name + '@' + r.version, 'through', r.server.host + ':' + r.server.port);
-
-    registerForCleanup(r);
+  servicify.offer(targetName).then(function (offering) {
+    console.log('offering local', offering.name + '@' + offering.version, 'through', offering.server.host + ':' + offering.server.port);
+    registerForCleanup(offering);
   }, function (err) {
     if (err.code !== 'MODULE_NOT_FOUND') throw err;
 
@@ -24,9 +20,9 @@ module.exports = function (argv) {
 
         process.chdir(npm.config.get('prefix'));
 
-        return service.offer(targetName).then(function (r) {
-          console.log('offering global', r.name + '@' + r.version, 'through', r.server.host + ':' + r.server.port);
-          registerForCleanup(r);
+        return servicify.offer(targetName).then(function (offering) {
+          console.log('offering global', offering.name + '@' + offering.version, 'through', offering.server.host + ':' + offering.server.port);
+          registerForCleanup(offering);
           resolve();
         }, reject);
       });
@@ -44,20 +40,20 @@ module.exports = function (argv) {
     process.exit(1);
   });
 
-  function registerForCleanup(registration) {
+  function registerForCleanup(offering) {
     process.stdin.resume();//so the program will not close instantly
 
     function exitHandler(options, err) {
-      if (registration) {
-        registration.stop().then(function () {
-          registration = null;
-          console.log('rescinded offer');
-          process.exit();
-        });
+      if (!offering) return;
 
-        if (err) {
-          console.log(err.stack);
-        }
+      offering.stop().then(function () {
+        offering = null;
+        console.log('rescinded offer');
+        process.exit();
+      });
+
+      if (err) {
+        console.log(err.stack);
       }
     }
 
