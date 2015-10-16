@@ -3,9 +3,6 @@
   "version": "0.8.1",
   "description": "A service registry tool that allows you to trivially turn a node package into a consumable web service.",
   "main": "./lib/servicify.js",
-  "bin": {
-    "servicify": "./bin/cmd.js"
-  },
   "scripts": {
     "test": "blue-tape test/*.js",
     "lint": "eslint --config .eslintrc index.js test/*.js lib/*.js"
@@ -42,6 +39,6 @@
     "async-identity": "1.0.1",
     "blue-tape": "0.1.10",
     "promise-identity": "1.1.1",
-    "servicify-pigato": "^0.1.0"
+    "servicify-pigato": "git@github.com:allain/servicify-pigato.git#master"
   }
 }
