@@ -16,9 +16,7 @@ function withNewServer(fn) {
   var servicify = new Servicify();
 
   return servicify.listen().then(function (server) {
-    return Promise.resolve(fn(server, servicify)).then(function () {
-      return server.stop();
-    });
+    return Promise.resolve(fn(server, servicify)).then(server.stop);
   });
 }
 

@@ -6,7 +6,7 @@
 
 ## Introduction
 
-**NOTE: API is still in flux until I hit v1.0.0** 
+**NOTE: API is still in flux until I hit v1.0.0**
 
 Servicify is a tool for trivially registering and consuming npm packages as microservices.
 
