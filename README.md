@@ -12,7 +12,7 @@ Servicify is a tool for trivially registering and consuming npm packages as micr
 
 I'm intending it to support multiple-backends since each backend comes with trade-offs.
 
-Service requests are done using semver which supports having multiple versions of a service in deployment at the same time.
+Service requirements are done using semver which supports having multiple versions of a service in deployment at the same time.
 
 ## Installation
 
@@ -26,11 +26,11 @@ Servicify's API is deliberately small. It's a tool, not a lifestyle.
 
 ### Servicify([opts])
 
-It's API has three things Servicify.listen, Servicify.offer, Servicify.require
+It's API provides 3 methods Servicify.listen, Servicify.offer, Servicify.require
 
 ### Servicify.listen([opts]) : Promise
 
-Starts a servicify registry making it possible for services to be found and for clients to consume them.
+Starts a servicify registry making it possible for services to be found by clients wishing to consume them.
  
 It returns a promise that resolves to an object with a .stop() method for turning the server off.
 
