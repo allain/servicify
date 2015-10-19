@@ -39,6 +39,6 @@
     "async-identity": "1.0.1",
     "blue-tape": "0.1.10",
     "promise-identity": "1.1.1",
-    "servicify-pigato": "git@github.com:allain/servicify-pigato.git#master"
+    "servicify-http": "git@github.com:allain/servicify-http.git#master"
   }
 }

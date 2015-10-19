@@ -55,11 +55,13 @@ test('promised-function offerings can invoke their targets directly', function (
 test('callback-function offerings can invoke their targets directly', function (t) {
   return withNewServer(function (server, servicify) {
     return servicify.offer(callbackIdentity, 'b@1.2.3').then(function (offering) {
-      return new Promise(function (resolve) {
+      return new Promise(function (resolve, reject) {
         var value = Math.random();
         return offering.invoke(value, function (err, result) {
+          if (err) reject(err);
           t.equal(result, value, 'returned value passed in');
-          offering.stop().then(resolve);
+
+          resolve(offering.stop());
         });
       });
     });
