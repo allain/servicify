@@ -40,6 +40,6 @@
     "async-identity": "1.0.1",
     "blue-tape": "0.1.10",
     "promise-identity": "1.1.1",
-    "servicify-http": "^0.1.0"
+    "servicify-http": "^0.1.1"
   }
 }
