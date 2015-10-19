@@ -29,6 +29,7 @@
     "minimist": "1.2.0",
     "native-promise-only": "0.8.1",
     "npm": "3.3.4",
+    "object-assign": "^4.0.1",
     "object-values": "1.0.0",
     "package-path": "0.0.1",
     "propper": "1.0.2",
