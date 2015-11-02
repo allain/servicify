@@ -31,7 +31,7 @@ test('test the testers', function (t) {
   });
 });
 
-test('supports lifecycle with default options', function (t) {
+test('supports loads servicify options from nearest package.json if no options given', function (t) {
   return Servicify().listen().then(function (server) {
     t.equal(server.host, '127.0.0.1');
     t.equal(server.port, 2020);
@@ -111,7 +111,7 @@ test('can offer without server being up yet', function (t) {
   });
 });
 
-test('loads options from package.json when requiring package', function (t) {
+test('loads options from package.json when requiring package if not given', function (t) {
   return withNewServer(function (server, servicify) {
     servicify.offer(require.resolve('blahblah')).then(function (offering) {
       t.ok(offering, 'service is constructed');

@@ -23,24 +23,18 @@
   "homepage": "https://github.com/allain/servificy#readme",
   "dependencies": {
     "array-find": "^1.0.0",
-    "debug": "2.2.0",
-    "defaults": "1.0.2",
-    "fj-flatten": "1.0.0",
-    "get-parameter-names": "0.2.0",
-    "minimist": "1.2.0",
-    "native-promise-only": "0.8.1",
-    "npm": "3.3.4",
-    "object-assign": "^4.0.1",
-    "object-values": "1.0.0",
+    "debug": "^2.2.0",
+    "fj-flatten": "^1.0.0",
+    "get-parameter-names": "^0.2.0",
+    "native-promise-only": "^0.8.1",
+    "object-values": "^1.0.0",
     "package-path": "0.0.1",
-    "propper": "1.0.2",
-    "read-pkg": "1.1.0",
+    "read-pkg": "^1.1.0",
     "semver": "5.0.3"
   },
   "devDependencies": {
-    "async-identity": "1.0.1",
     "blue-tape": "0.1.10",
-    "promise-identity": "1.1.1",
+    "promise-identity": "^1.1.1",
     "servicify-http": "^0.1.1"
   }
 }
