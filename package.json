@@ -13,7 +13,8 @@
   },
   "keywords": [
     "semver",
-    "registry"
+    "registry",
+    "microservice"
   ],
   "author": "Allain Lalonde <allain.lalonde@gmail.com>",
   "license": "MIT",
@@ -35,6 +36,6 @@
   "devDependencies": {
     "blue-tape": "0.1.10",
     "promise-identity": "^1.1.1",
-    "servicify-http": "^0.1.1"
+    "servicify-http": "~1.x.x"
   }
 }
