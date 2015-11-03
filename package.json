@@ -28,6 +28,7 @@
     "fj-flatten": "^1.0.0",
     "get-parameter-names": "^0.2.0",
     "native-promise-only": "^0.8.1",
+    "object-assign": "^4.0.1",
     "object-values": "^1.0.0",
     "package-path": "0.0.1",
     "read-pkg": "^1.1.0",
