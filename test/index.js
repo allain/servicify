@@ -39,6 +39,13 @@ test('supports loads servicify options from nearest package.json if no options g
   });
 });
 
+test('supports specifying driver defaults', function (t) {
+  return Servicify({driver: 'servicify-http', host: '127.0.0.1'}).listen().then(function (server) {
+    t.equal(server.port, 2020);
+    return server.stop();
+  });
+});
+
 test('promised-function offerings can invoke their targets directly', function (t) {
   return withNewServer(function (server, servicify) {
     return servicify.offer(promiseIdentity, 'a@1.2.3').then(function (offering) {
