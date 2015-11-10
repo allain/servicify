@@ -3,5 +3,11 @@
     "testing": true,
     "host": "127.0.0.1",
     "port": 2020
+  },
+
+  "dependencies": {
+    "promised-messager": "^1.0.0",
+    "callback-messager": "^1.0.0",
+    "blahblah": "^1.0.0"
   }
 }

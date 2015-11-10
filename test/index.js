@@ -2,6 +2,7 @@ var Servicify = require('../lib/servicify');
 var test = require('blue-tape');
 var Promise = require('native-promise-only');
 
+
 function promiseIdentity(x) {
   return Promise.resolve(x);
 }
@@ -48,7 +49,7 @@ test('supports specifying driver defaults', function (t) {
 
 test('promised-function offerings can invoke their targets directly', function (t) {
   return withNewServer(function (server, servicify) {
-    return servicify.offer(promiseIdentity, 'a@1.2.3').then(function (offering) {
+    return servicify.offer('promise-identity').then(function (offering) {
       var value = Math.random();
 
       return offering.invoke(value).then(function (result) {
@@ -88,15 +89,13 @@ test('promised-methods offerings can invoke their targets directly', function (t
 });
 
 test('promised-methods offerings work', function (t) {
+  process.chdir(__dirname);
+
   return withNewServer(function (server, servicify) {
-    var target = require('promised-messager');
-    return servicify.offer(target, {name: 'promised-messager', version: '1.0.0'}).then(function (offering) {
+    return servicify.offer('promised-messager').then(function (offering) {
       var value = Math.random();
-      var obj = servicify.require({
-        name: 'promised-messager',
-        version: '^1.0.0',
-        path: require.resolve('promised-messager')
-      });
+      var obj = servicify.require('promised-messager');
+
       return obj.greet('Bob ' + value).then(function(result) {
         t.equal(result, 'Hello Bob ' + value);
         return offering.stop();
@@ -123,16 +122,10 @@ test('callback-methods offerings can invoke their targets directly', function (t
 
 test('callback-methods offerings work', function (t) {
   return withNewServer(function (server, servicify) {
-    var target = require('callback-messager');
-
-    return servicify.offer(target, {name: 'callback-messager', version: '1.0.0'}).then(function (offering) {
+    return servicify.offer('callback-messager').then(function (offering) {
       var value = Math.random();
 
-      var obj = servicify.require({
-        name: 'callback-messager',
-        version: '^1.0.0',
-        path: require.resolve('callback-messager')
-      });
+      var obj = servicify.require('callback-messager');
 
       return new Promise(function(resolve, reject) {
         obj.greet('Bob ' + value, function (err, result) {
@@ -161,6 +154,8 @@ test('supports offering local packages', function (t) {
 });
 
 test('offerings are available for require', function (t) {
+  process.chdir(__dirname + '/..');
+
   return withNewServer(function (server, servicify) {
     return servicify.offer('promise-identity').then(function (offering) {
       var value = Math.random();
@@ -178,12 +173,16 @@ test('offerings are available for require', function (t) {
 });
 
 test('can require without server being up yet', function (t) {
+  process.chdir(__dirname + '/..');
+
   var identity = Servicify().require('promise-identity');
   t.equal(typeof identity, 'function');
   t.end();
 });
 
 test('can offer without server being up yet', function (t) {
+  process.chdir(__dirname + '/..');
+
   return Servicify().offer('promise-identity').then(function (offering) {
     t.equal(typeof offering, 'object');
     return offering.stop();
@@ -191,8 +190,10 @@ test('can offer without server being up yet', function (t) {
 });
 
 test('loads options from package.json when requiring package if not given', function (t) {
+  process.chdir(__dirname + '/..');
+
   return withNewServer(function (server, servicify) {
-    servicify.offer(require.resolve('blahblah')).then(function (offering) {
+    servicify.offer('blahblah').then(function (offering) {
       t.ok(offering, 'service is constructed');
       t.equal(offering.timeout, 10, 'able to spec number prop');
       t.equal(offering.param, 'test param', 'able to spec string param');
@@ -203,6 +204,8 @@ test('loads options from package.json when requiring package if not given', func
 });
 
 test('throws when offered is not a package name and no spec is given', function (t) {
+  process.chdir(__dirname + '/..');
+
   withNewServer(function (server, servicify) {
     return servicify.offer(function() {}).then(t.fail, function(err) {
       t.ok(err instanceof Error, 'expects an Error');
