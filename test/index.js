@@ -75,6 +75,78 @@ test('callback-function offerings can invoke their targets directly', function (
   });
 });
 
+test('promised-methods offerings can invoke their targets directly', function (t) {
+  return withNewServer(function (server, servicify) {
+    return servicify.offer(require.resolve('promised-messager')).then(function (offering) {
+      var value = Math.random();
+      return offering.invoke('greet', 'Bob ' + value).then(function(result) {
+        t.equal(result, 'Hello Bob ' + value);
+        return offering.stop();
+      });
+    });
+  });
+});
+
+test('promised-methods offerings work', function (t) {
+  return withNewServer(function (server, servicify) {
+    var target = require('promised-messager');
+    return servicify.offer(target, {name: 'promised-messager', version: '1.0.0'}).then(function (offering) {
+      var value = Math.random();
+      var obj = servicify.require({
+        name: 'promised-messager',
+        version: '^1.0.0',
+        path: require.resolve('promised-messager')
+      });
+      return obj.greet('Bob ' + value).then(function(result) {
+        t.equal(result, 'Hello Bob ' + value);
+        return offering.stop();
+      });
+    });
+  });
+});
+
+test('callback-methods offerings can invoke their targets directly', function (t) {
+  return withNewServer(function (server, servicify) {
+    return servicify.offer(require.resolve('callback-messager')).then(function (offering) {
+      var value = Math.random();
+      return new Promise(function(resolve, reject) {
+        return offering.invoke('greet', 'Bob ' + value, function(err, result) {
+          if (err) return reject(err);
+
+          t.equal(result, 'Hello Bob ' + value);
+          resolve();
+        });
+      }).then(offering.stop);
+    });
+  });
+});
+
+test('callback-methods offerings work', function (t) {
+  return withNewServer(function (server, servicify) {
+    var target = require('callback-messager');
+
+    return servicify.offer(target, {name: 'callback-messager', version: '1.0.0'}).then(function (offering) {
+      var value = Math.random();
+
+      var obj = servicify.require({
+        name: 'callback-messager',
+        version: '^1.0.0',
+        path: require.resolve('callback-messager')
+      });
+
+      return new Promise(function(resolve, reject) {
+        obj.greet('Bob ' + value, function (err, result) {
+          if (err) return reject(err);
+
+          t.equal(result, 'Hello Bob ' + value);
+          resolve();
+        });
+      }).then(offering.stop);
+    });
+  });
+});
+
+
 test('supports offering local packages', function (t) {
   return withNewServer(function (server, servicify) {
     return servicify.offer('promise-identity').then(function (offering) {
