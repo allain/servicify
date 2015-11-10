@@ -45,7 +45,8 @@ The offer method makes its offering available to consumers.
 Offerings can be:
 
 1. an asynchronous function (callback, or promised) and a spec of the form {name: 'NAME', version: 'SEMVER'}
-2. a package name that exports one of #1
+2. an object with asynchronous methods (callback, or promised) and a spec of the form {name: 'NAME', version: 'SEMVER'}
+3. a package name that exports one of the above
 
 `offer` returns a promise which resolves to an object with stop and an invoke methods, as well as any driver specific properties it may have.
 
