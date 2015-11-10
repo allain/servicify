@@ -74,4 +74,4 @@ If you've setup servicify using the "servicify" package.json option, you may use
 var a = require('servicify')('a'); // instead
 ```
 
-![Servicify All The Things!](http://cdn.meme.am/instances/500x/40263771.jpg)
+![Servicify All The Things!](https://docs.google.com/uc?id=0B66puqNhVuXQWUVQX3NkQU1EdWs&export=download)
