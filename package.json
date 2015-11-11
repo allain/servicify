@@ -33,7 +33,7 @@
     "object-values": "^1.0.0",
     "package-path": "0.0.1",
     "read-pkg": "^1.1.0",
-    "require-resolve": "0.0.2",
+    "resolve": "^1.1.6",
     "semver": "5.0.3"
   },
   "devDependencies": {

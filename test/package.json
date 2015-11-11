@@ -4,10 +4,10 @@
     "host": "127.0.0.1",
     "port": 2020
   },
-
   "dependencies": {
-    "promised-messager": "^1.0.0",
+    "blahblah": "^1.0.0",
     "callback-messager": "^1.0.0",
-    "blahblah": "^1.0.0"
+    "promise-identity": "^1.1.1",
+    "promised-messager": "^1.0.0"
   }
 }

@@ -48,6 +48,8 @@ test('supports specifying driver defaults', function (t) {
 });
 
 test('promised-function offerings can invoke their targets directly', function (t) {
+  process.chdir(__dirname + '/..');
+
   return withNewServer(function (server, servicify) {
     return servicify.offer('promise-identity').then(function (offering) {
       var value = Math.random();
@@ -77,6 +79,7 @@ test('callback-function offerings can invoke their targets directly', function (
 });
 
 test('promised-methods offerings can invoke their targets directly', function (t) {
+  process.chdir(__dirname);
   return withNewServer(function (server, servicify) {
     return servicify.offer(require.resolve('promised-messager')).then(function (offering) {
       var value = Math.random();
@@ -89,8 +92,6 @@ test('promised-methods offerings can invoke their targets directly', function (t
 });
 
 test('promised-methods offerings work', function (t) {
-  process.chdir(__dirname);
-
   return withNewServer(function (server, servicify) {
     return servicify.offer('promised-messager').then(function (offering) {
       var value = Math.random();
@@ -103,6 +104,8 @@ test('promised-methods offerings work', function (t) {
     });
   });
 });
+
+
 
 test('callback-methods offerings can invoke their targets directly', function (t) {
   return withNewServer(function (server, servicify) {
@@ -206,13 +209,40 @@ test('loads options from package.json when requiring package if not given', func
 test('throws when offered is not a package name and no spec is given', function (t) {
   process.chdir(__dirname + '/..');
 
-  withNewServer(function (server, servicify) {
+  return withNewServer(function (server, servicify) {
     return servicify.offer(function() {}).then(t.fail, function(err) {
       t.ok(err instanceof Error, 'expects an Error');
       t.equal(err.message, 'spec not given with offer', 'correct message');
-      t.end();
     });
   });
 });
+
+test('throws error when server is not available to receive request', function (t) {
+  process.chdir(__dirname);
+  var servicify = new Servicify();
+
+  var blah = servicify.require('blahblah');
+  blah('will fail', function(err) {
+    t.ok(err instanceof Error, 'expected error');
+    t.end();
+  });
+});
+
+// WIP: locks up waiting for response
+test.skip('handles case of rejected promise on remote end', function (t) {
+  process.chdir(__dirname);
+
+  return withNewServer(function (server, servicify) {
+    return servicify.offer('failer').then(function (offering) {
+      var failer = servicify.require('failer');
+
+      return failer.reject('Rejected').catch(function(err) {
+        t.ok(err instanceof Error);
+        t.equal(err.message, 'Rejected');
+      }).then(offering.stop);
+    });
+  });
+});
+
 
 
