@@ -37,7 +37,7 @@
     "semver": "5.1.0"
   },
   "devDependencies": {
-    "blue-tape": "0.1.10",
+    "blue-tape": "0.1.11",
     "promise-identity": "^1.1.1",
     "servicify-http": "~1.x.x"
   }
