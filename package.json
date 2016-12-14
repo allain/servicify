@@ -24,7 +24,7 @@
   "homepage": "https://github.com/allain/servificy#readme",
   "dependencies": {
     "array-find": "^1.0.0",
-    "debug": "^2.2.0",
+    "debug": "^2.4.0",
     "fj-flatten": "^1.0.0",
     "get-parameter-names": "^0.2.0",
     "is-array": "^1.0.1",
